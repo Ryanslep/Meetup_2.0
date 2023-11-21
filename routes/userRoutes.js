@@ -12,7 +12,7 @@ router.post('/register/:username/:email/:password/:fullName', async (req, res) =
   const { username, email, password, fullName } = req.params;
   try {
     // Check if the username or email is already in use
-    const existingUser = await User.findOne({ $or: [{ username }, { email }] }).populate("preferences").populate("blockedUsers");
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] })
 
     if (existingUser) {
       return res.status(400).json({ message: 'Username or email already in use' });
@@ -27,7 +27,8 @@ router.post('/register/:username/:email/:password/:fullName', async (req, res) =
       email,
       password,
       fullName,
-      preferences: preferences, // Assign the preferences to the user
+      preferences: preferences,
+      blockedUsers: [],
     });
 
     // Save the user
@@ -82,11 +83,7 @@ router.get('/fetch/:userId', async (req, res) => {
   console.log
   try {
     const userId = req.params.userId;
-    const user = await User.findById(userId).populate("preferences").populate(
-      {path: 'preferences',
-      populate: {
-        path: 'blockedUsers',
-      }});;
+    const user = await User.findById(userId).populate("preferences");
 
     console.log(user)
 
@@ -106,11 +103,11 @@ router.get('/fetch/:userId', async (req, res) => {
 
 //Route for fetching user by username
 router.get('/fetchUsername/:username', async (req, res) => {
-  
+
   try {
     const username = req.params.username;
     console.log(username);
-    const user = await User.findOne({username: username});
+    const user = await User.findOne({ username: username });
 
     console.log(user)
 
@@ -129,15 +126,15 @@ router.get('/fetchUsername/:username', async (req, res) => {
 });
 //delete user route
 router.post('/delete-user', async (req, res) => {
-    const userId = req.body.userId;
+  const userId = req.body.userId;
 
-    User.findByIdAndRemove(userId, (err, result) => {
-      if(err){
-        res.status(500).json({error: 'Could not delete user'});
-      } else{
-        res.status(200).json({message: 'User deleted successfully'});
-      }
-    })
+  User.findByIdAndRemove(userId, (err, result) => {
+    if (err) {
+      res.status(500).json({ error: 'Could not delete user' });
+    } else {
+      res.status(200).json({ message: 'User deleted successfully' });
+    }
+  })
 })
 //update user route
 router.put('/update-user', async (req, res) => {
@@ -148,7 +145,7 @@ router.put('/update-user', async (req, res) => {
     email: req.body.email,
   };
 
-  User.findByIdAndUpdate(userId, updatedData, {new: true}, (err, updatedUser) => {
+  User.findByIdAndUpdate(userId, updatedData, { new: true }, (err, updatedUser) => {
     if (err) {
       res.status(500).json({ error: 'Could not update user' });
     } else {
@@ -163,40 +160,23 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Find the user by username
-    const user = await User.findOne({ username }).populate("preferences").populate(
-      {path: 'preferences',
-      populate: {
-        path: 'blockedUsers',
-      }});
+    const user = await User.findOne({ username }).populate("preferences");
 
-    // Log the user data for debugging
-    console.log('User found:', user);
-
-    // If the user is not found
     if (!user) {
-      console.log('User not found');
-      return res.status(401).json({ success: false, message: 'Invalid username or password' });
+      return res.status(401).json({ success: false, message: 'User does not exist' });
     }
 
-    // Compare the provided password with the hashed password stored in the database
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    // Log the result of password comparison for debugging
-    console.log('Password comparison result:', isPasswordValid);
-
-    // If the passwords match
     if (isPasswordValid) {
-      // You may generate a token for authentication here and include it in the response
       return res.status(200).json({ success: true, message: 'Login successful', user });
     } else {
       // If the passwords do not match
-      console.log('Invalid password');
-      return res.status(401).json({ success: false, message: 'Invalid username or password' });
+      return res.status(401).json({ success: false, message: 'Invalid password' });
     }
   } catch (error) {
     console.error('Error during login:', error);
-    res.status(500).json({ success: false, message: 'Internal Server Error' });
+    res.status(500).json({ success: false, message: 'Error Connecting to Database' });
   }
 });
 
@@ -247,7 +227,7 @@ router.get('/preferences/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId).populate('preferences');
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -273,7 +253,7 @@ router.get('/preferences/:userId', async (req, res) => {
 router.post('/preferences/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const { receiveNotifications, rsvpVisibility, blockedUsers  } = req.body;
+    const { receiveNotifications, rsvpVisibility, blockedUsers } = req.body;
     // Add more incoming preferences as needed
 
     // Find user
@@ -282,27 +262,20 @@ router.post('/preferences/:userId', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
     // Check if user already has preferences
     let preferences = user.preferences;
-    console.log(user)
-    if (preferences) {
-      console.log('Already preferences duh')
-      // If not, create new preferences
-      preferences = new Preferences({
-        receiveNotifications: receiveNotifications, 
+
+
+
+    console.log('Updating Preferences...')
+    // If yes, update existing preferences
+    const response = await Preferences.findByIdAndUpdate(preferences._id,
+      {
+        receiveNotifications: receiveNotifications,
         rsvpVisibility: rsvpVisibility,
         blockedUsers: blockedUsers
-        // Add more preferences as needed
-      });
-      await preferences.save();
-      user.preferences = preferences._id;
-      console.log(preferences)
-    } else {
-      console.log('Updating Preefeneces...')
-      // If yes, update existing preferences
-      const response = await Preferences.findByIdAndUpdate(preferences._id, {receiveNotifications: receiveNotifications})
-    }
+      }
+    );
 
     await user.save();
 
@@ -317,48 +290,34 @@ router.post('/block', async (req, res) => {
   const { userId, blockedUserId } = req.body;
 
   try {
-    // Find the user making the request
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Find the preferences by ID (assuming it's stored in the user's preferences field)
-    const preferences = await Preferences.findById(user.preferences);
+    const isAlreadyBlocked = user.blockedUsers.includes(blockedUserId);
 
-    if (!preferences) {
-      // Create a new Preferences object if it doesn't exist
-      const newPreferences = new Preferences();
-      await newPreferences.save();
-
-      user.preferences = newPreferences._id;
-    }
-
-    // Map through the blockedUsers array and check if blockedUserId is present
-    const isAlreadyBlocked = preferences.blockedUsers.some(
-      (blockedUser) => blockedUser.equals(blockedUserId)
-    );
-
-    // If the user is already blocked, return an error response
+    // Toggle the user's block status
     if (isAlreadyBlocked) {
-      return res.status(400).json({ error: 'User already blocked' });
+      console.log('was already blocked')
+      user.blockedUsers = user.blockedUsers.filter((id) => id === blockedUserId);
+    } else {
+      console.log('was not blocked')
+      user.blockedUsers.push(blockedUserId);
     }
 
-    // Add the blocked user to the blocklist
-    preferences.blockedUsers.push(blockedUserId);
-
-    // Save the updated preferences
-    await preferences.save();
-
-    // Save the updated user
     await user.save();
+    const action = isAlreadyBlocked ? 'unblocked' : 'blocked';
 
-    res.status(200).json({ message: 'User blocked successfully' });
+    return res.status(200).json({ message: `User ${action} successfully` });
   } catch (error) {
-    console.error('Error blocking user:', error);
+    console.error('Error blocking/unblocking user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
 
 module.exports = router;

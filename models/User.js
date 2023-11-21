@@ -12,6 +12,9 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
+  blockedUsers: [
+    { type: Schema.Types.ObjectId, ref: 'User' },
+  ],
   fullName: {
     type: String,
     required: true,

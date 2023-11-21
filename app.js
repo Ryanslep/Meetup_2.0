@@ -25,7 +25,8 @@ mongoose.connect(`mongodb://${process.env.DBHOST}:27017/meetup`, {
 app.use(cors({ origin: "*"}));
 
 // Middleware to parse JSON requests
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' })); // Adjust the limit as needed
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // User routes
 const userRoutes = require('./routes/userRoutes');

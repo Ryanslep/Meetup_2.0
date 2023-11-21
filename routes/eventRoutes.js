@@ -1,46 +1,43 @@
 const express = require('express');
-
-const User = require('../models/User');
 const router = express.Router();
-const Event = require('../models/Event'); //Import event model
-const mongoose = require('mongoose');
+const Event = require('../models/Event');
+const User = require('../models/User');
 
-// Route for event creation
 router.post('/create', async (req, res) => {
-  const { eventName, date, startTime, endTime, address, capacity, description, host, recurring } = req.body;
-
   try {
-    // Parse the date, startTime, and endTime to valid Date objects
-    const parsedDate = new Date(date);
-    const parsedStartTime = new Date(`1970-01-01T${startTime}`);
-    const parsedEndTime = new Date(`1970-01-01T${endTime}`);
+    // Extract event details from the request body
+    const { eventName, date, startTime, endTime, address, capacity, description, host, pictures } = req.body;
 
     // Create a new event
     const event = new Event({
       eventName,
-      date: parsedDate,
-      startTime: parsedStartTime,
-      endTime: parsedEndTime,
+      date: new Date(date),
+      startTime: new Date(startTime),
+      endTime: new Date(endTime),
       address,
       capacity,
       description,
       host,
-      recurring,
+      pictures
     });
+
+    // Save the event to the database
     await event.save();
 
     // Find the user by the host ID
     const user = await User.findById(host);
 
+    // If user not found, return an error response
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    console.log('create was called');
+
     // Update the user's events array
     user.events.push(event);
     await user.save();
 
-    res.json({ message: 'Event successfully created' });
+    // Return a success response
+    res.json(event);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Event creation failed' });
@@ -102,7 +99,6 @@ router.get('/fetch', async (req, res) => {
 
 // Fetch user event by Id
 router.get('/fetch/:eventId', async (req, res) => {
-  console.log('fetch event')
     try{
         const eventId = req.params.eventId;
         const event = await Event.findById(eventId).populate('rsvps');
@@ -176,7 +172,7 @@ router.post('/rsvp/:eventId/:userId', async (req, res) => {
         if (userIndex !== -1) {
             // If user is already in the RSVP list, remove them
             event.rsvps.splice(userIndex, 1);
-            res.status(200).json({ message: `You are no longer RSVP\'d for \"${event.eventName}\"`, event });
+            res.status(201).json({ message: `You are no longer RSVP\'d for \"${event.eventName}\"`, event });
         } else {
             // If user is not in the RSVP list, add them
             event.rsvps.push(userId);
@@ -242,12 +238,11 @@ router.post('/report', async (req, res) => {
       const eventId = req.params.eventId;
   
       // Find the event
-      const event = await Event.findById(eventId);
+      const event = await Event.findById(eventId).populate('rsvps');
   
       if (!event) {
         return res.status(404).json({ error: 'Event not found.' });
       }
-  
       res.json(event.rsvps);
     } catch (error) {
       console.error('Error fetching event RSVPs:', error);

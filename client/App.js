@@ -1,25 +1,58 @@
+// App.js
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import LoginScreen from './components/LoginScreen';
-
+import { StyleSheet } from 'react-native';
+import { RootSiblingParent } from 'react-native-root-siblings';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { AppProvider } from './components/AppContext';
+
+import RegisterScreen from './components/RegisterScreen';
+import LoginScreen from './components/LoginScreen';
+import ProfileScreen from './components/ProfileScreen';
+import Navbar from './components/Navbar';
+import BrowseScreen from './components/BrowseScreen';
+import EventFormScreen from './components/EventFormScreen';
+import EventDetails from './components/EventDetails';
+import Preferences from './components/Preferences';
+import SendMessageScreen from './components/SendMessageScreen';
+
 const Stack = createStackNavigator();
 
-
-export default function App() {
+const App = () => {
   return (
-    <NavigationContainer>
-    <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen name="Login" component={LoginScreen} />
-    </Stack.Navigator>
-
-    {/* Leave Status Bar There */}
-    <StatusBar style="auto" />
-  </NavigationContainer>
-
+    <RootSiblingParent style={styles.container}>
+      <AppProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Login">
+            <Stack.Screen name="Profile">
+              {(props) => <ProfileScreen {...props} />}
+            </Stack.Screen>
+            <Stack.Screen name="Browse">
+              {(props) => <BrowseScreen {...props} />}
+            </Stack.Screen>
+            <Stack.Screen name="Create Event">
+              {(props) => <EventFormScreen {...props} />}
+            </Stack.Screen>
+            <Stack.Screen name="Login">
+              {(props) => <LoginScreen {...props} />}
+            </Stack.Screen>
+            <Stack.Screen name="Register">
+              {(props) => <RegisterScreen {...props} />}
+            </Stack.Screen>
+            <Stack.Screen name="Event Details" component={EventDetails} />
+            <Stack.Screen name="Send Message" component={SendMessageScreen} />
+            <Stack.Screen name="Preferences">
+              {(props) => <Preferences {...props} />}
+            </Stack.Screen>
+          </Stack.Navigator>
+          <Navbar />
+          <StatusBar style="auto" />
+        </NavigationContainer>
+      </AppProvider>
+    </RootSiblingParent>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -27,5 +60,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    height: '100%',
   },
 });
+
+export default App;

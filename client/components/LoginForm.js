@@ -1,51 +1,81 @@
-import React, { useState } from 'react';
+// LoginForm.js
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import FlexInput from './FlexInput';
 import SubmitButton from './SubmitButton';
+import CustomAlert from './CustomAlert';
 
 import userApi from '../api/userApi';
+import { useAppContext } from './AppContext'; // Import the useAppContext hook
 
 const LoginForm = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+    const navigation = useNavigation(); // Hook for navigation
+    const { setLoggedIn, setUser } = useAppContext(); // Use the context values
 
-  const handleLogin = async () => {
-    console.log('Username:', username);
-    console.log('Password:', password);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [response, setResponse] = useState(null);
 
-    const sendLogin = await userApi.login(username, password);
-    const response = await sendLogin;
-    console.log(response);
+    useEffect(() => {
+        const checkSession = async () => {
+            // Check for previous session
+            console.log(typeof setLoggedIn)
+            const previousSession = await AsyncStorage.getItem('@userId');
+            if(previousSession) {
+                const user = await userApi.getUserInfo(previousSession);
+                setLoggedIn(true)
+                setUser(user)
+                navigation.navigate('Profile');
+            }
+        }
+        checkSession()
+    }, [])
 
-    // You can add logic to show a toast message here based on the response
-  };
+    const handleLogin = async () => {
 
-  return (
-    <View style={styles.container}>
-      <FlexInput
-        type="text"
-        placeholder="Username or Email"
-        value={username}
-        onChangeText={(text) => setUsername(text)}
-      />
-      <FlexInput
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-      />
-      <SubmitButton
-        onPress={handleLogin}
-        title="Login"
-      />
-    </View>
-  );
+        const sendLogin = await userApi.login(username, password);
+        const data = await sendLogin;
+
+        // Always set the response to trigger CustomAlert
+        setResponse(data);
+
+        if (data && data.success) {
+            // Navigate to the next screen (replace 'Home' with your screen name)
+            setLoggedIn(true)
+            setUser(data.user)
+            await AsyncStorage.setItem('@userId', data.user._id);
+            navigation.navigate('Profile');
+        }
+    };
+
+    return (
+        <View style={styles.container}>
+            <FlexInput
+                type="text"
+                placeholder="Username or Email"
+                value={username}
+                onChangeText={(text) => setUsername(text)}
+            />
+            <FlexInput
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+            />
+            <SubmitButton title="Login" onPress={handleLogin} />
+            {response && <CustomAlert message={response.message} success={response.success} />}
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
+    container: {
+        padding: 20,
+        minWidth: '100%'
+    },
 });
 
 export default LoginForm;
