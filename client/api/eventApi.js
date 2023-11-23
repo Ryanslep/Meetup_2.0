@@ -54,18 +54,19 @@ const eventApi = {
     return updatedEvent;
   },
 
-  rsvp: async (eventId, hostId) => {
+  rsvp: async (eventId, userId) => {
+    console.log('Got this as eventId: ', eventId)
     try {
-      const response = await fetch(`${apiBaseUrl}/event/rsvp/${eventId}/${hostId}`, {
+      const response = await fetch(`${apiBaseUrl}/event/rsvp/${eventId}/${userId}`, {
         method: 'POST',
       });
   
       if (response.ok) {
         if (response.status === 200) {
-          return 'You are now attending this event';
+          return 'RSVP';
         }
         if (response.status === 201) {
-          return 'No longer attending this event';
+          return 'UNRSVP';
         }
       } else {
         const error = await response.json();

@@ -14,7 +14,6 @@ const EventFormScreen = () => {
   const navigation = useNavigation();
   const { user, setMyEvents, setBrowseEvents } = useAppContext();
 
-
   const [eventName, setEventName] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date());
@@ -23,6 +22,7 @@ const EventFormScreen = () => {
   const [capacity, setCapacity] = useState('');
   const [address, setAddress] = useState('');
   const [images, setImages] = useState(null);
+  const [capacityError, setCapacityError] = useState('');
 
   const handleDateChange = (selectedDate) => {
     setDate(selectedDate);
@@ -62,6 +62,14 @@ const EventFormScreen = () => {
   };
 
   const handleSubmit = async () => {
+    const capacityNumber = parseInt(capacity, 10);
+
+    if (isNaN(capacityNumber) || capacityNumber <= 0) {
+      setCapacityError('Please enter a valid capacity (a positive number).');
+      return;
+    } else {
+      setCapacityError('');
+    }
     // Create an event object
     const newEvent = {
       host: user._id, // Assuming user is the logged-in user from the context
@@ -129,6 +137,7 @@ const EventFormScreen = () => {
           onChangeText={(text) => setCapacity(text)}
           keyboardType="numeric"
         />
+        {capacityError ? <Text style={styles.errorText}>{capacityError}</Text> : null}
 
         <MultiImagePicker onImagesSelected={handleImagesSelected} />
 
@@ -165,6 +174,10 @@ const styles = StyleSheet.create({
   },
   submit: {
     marginBottom: 20, // Add some margin at the bottom
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 5,
   },
 });
 

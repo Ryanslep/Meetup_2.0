@@ -1,8 +1,15 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import UserWithOptions from './UserWithOptions';
+import { useAppContext } from './AppContext';
 
 const EventInfo = ({ event, hostData }) => {
+    console.log('ppppppppppppppppppppppppppp')
+  console.log(hostData)
+    console.log('ppppppppppppppppppppppppppp')
+
+  const { getCurrentUser } = useAppContext();
+    console.log('getCurrentUser', getCurrentUser()._id);
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString();
     };
@@ -54,9 +61,8 @@ const EventInfo = ({ event, hostData }) => {
                 {hostData ? (
                     <UserWithOptions
                         user={hostData}
-                        onPressMessage={() => alert('Message Host')}
-                        onPressBlock={() => alert('Block Host')}
-                        onPressAddFriend={() => alert('Add Friend Host')}
+                        senderId={getCurrentUser()._id}
+                        receiverId={hostData._id}
                     />
                 ) : (
                     <Text>Loading host data...</Text>

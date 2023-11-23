@@ -3,7 +3,7 @@ import { Pressable, Text, StyleSheet } from 'react-native';
 
 const SubmitButton = ({ onPress, title }) => {
   return (
-    <Pressable style={styles.button} onPress={onPress}>
+    <Pressable onPress={onPress} style={styles.button}>
       <Text style={styles.text}>{title}</Text>
     </Pressable>
   );

@@ -1,69 +1,96 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { localDate, localTime } from '../utils/formatFunctions';
 import { useNavigation } from '@react-navigation/native';
 import eventApi from '../api/eventApi';
+import { useAppContext } from './AppContext';
+import Toast from 'react-native-root-toast';
 
-const EventCard = ({ event, userId, setMyRsvps, setMyEvents, setBrowseEvents }) => {
+const EventCard = ({ event }) => {
+  const {
+    myRsvps,
+    myEvents,
+    setMyEvents,
+    user,
+    setMyRsvps,
+    setBrowseEvents,
+  } = useAppContext();
   const navigation = useNavigation();
+
   const handleViewDetails = () => {
-    // Navigate to the EventDetails screen with the event prop
     navigation.navigate('Event Details', { event });
   };
-  const handleRSVP = () => {
-    // Capture the current value of myRsvps before the promise resolves
-  
-    eventApi.rsvp(event._id, userId)
-      .then(response => {
-        console.log(response);
-  
-        if (response === "You are now attending this event") {
-          // Add to myRsvps
-          setMyRsvps((prevRsvps) => [...prevRsvps, event]);
-        } else {
-          // Take away from current myRsvps
-          setMyRsvps((prevRsvps) => prevRsvps.filter((rsvp) => rsvp._id !== event._id));
-        }
-      })
-      .catch(error => {
-        console.error('Error RSVPing to event:', error);
-      });
+
+  const showToast = (message, backgroundColor) => {
+    Toast.show(message, {
+      duration: Toast.durations.SHORT,
+      position: -80,
+      shadow: true,
+      backgroundColor,
+      animation: true,
+    });
   };
-  
+
+  const handleRSVP = async () => {
+    try {
+      const rsvpAttempt = await eventApi.rsvp(event._id, user._id);
+      if (rsvpAttempt === 'RSVP') {
+        showToast(`You are now attending ${event.eventName}!`, 'green');
+        setMyRsvps([...myRsvps, event]);
+      } else {
+        showToast(`No longer attending ${event.eventName}!`, 'orangered');
+        setMyRsvps(myRsvps.filter((rsvp) => rsvp._id !== event._id));
+      }
+      return rsvpAttempt;
+    } catch (err) {
+      showToast(`${event.eventName} no longer exists!`, 'red');
+    }
+  };
 
   const handleDelete = async () => {
-    if(event.host === userId) {
-      const deleteEvent = await eventApi.delete(event._id, userId);
-      if (deleteEvent.message === 'Event successfully deleted') {
-        setMyEvents((prevEvents) => prevEvents.filter((item) => item._id !== event._id));
-        setBrowseEvents((prevEvents) => prevEvents.filter((item) => item._id !== event._id));
-        console.log('Event successfully deleted');
-      } else {
-        console.log('Issue deleting event');
+    try {
+      const attemptDelete = await eventApi.delete(event._id, user._id);
+      console.log('Delete attempt result:', attemptDelete);
+
+      if (attemptDelete.message === 'Deleted') {
+        setMyEvents(myEvents.filter((myEvent) => myEvent._id !== event._id));
+        setBrowseEvents((prevEvents) =>
+          prevEvents.filter((prevEvent) => prevEvent._id !== event._id)
+        );
+
+        showToast(`${event.eventName} successfully deleted!`, 'red');
       }
+      return attemptDelete;
+    } catch (err) {
+      console.error('Error deleting event:', err);
+      showToast(`${event.eventName} no longer exists`, 'red');
     }
-  }
+  };
 
   return (
     <View style={styles.card}>
       <View style={styles.row}>
         <Text style={styles.title}>{event.eventName}</Text>
+
         <Pressable onPress={handleViewDetails}>
-          <Image source={require('../assets/viewDetails.png')} style={styles.icon} />
+          <Image
+            source={require('../assets/viewDetails.png')}
+            style={styles.icon}
+          />
         </Pressable>
 
-        {/* Conditionally render RSVP button and Message Buttons */}
-        {userId !== event.host ?
-          <>
-            <Pressable onPress={handleRSVP}>
-              <Image source={require('../assets/rsvp.png')} style={styles.icon} />
-            </Pressable>
-          </>
-          :
-          <Pressable onPress={handleDelete}>
-            <Image source={require('../assets/delete.png')} style={styles.icon} />
+        {user._id !== event.host ? (
+          <Pressable onPress={() => handleRSVP(event._id)}>
+            <Image source={require('../assets/rsvp.png')} style={styles.icon} />
           </Pressable>
-        }
+        ) : (
+          <Pressable onPress={handleDelete}>
+            <Image
+              source={require('../assets/delete.png')}
+              style={styles.icon}
+            />
+          </Pressable>
+        )}
       </View>
 
       <Text>{event.description}</Text>
@@ -106,7 +133,6 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
-  // Add more styles as needed
 });
 
 export default EventCard;

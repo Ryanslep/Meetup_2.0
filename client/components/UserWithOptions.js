@@ -3,17 +3,19 @@ import React from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const UserWithOptions = ({ user, sender, receiver, onPressMessage, onPressBlock, onPressAddFriend }) => {
+const UserWithOptions = ({ user, senderId, receiverId, onPressBlock, onPressAddFriend }) => {
   const navigation = useNavigation();
-
+  console.log(user.username)
   const handlePressMessage = () => {
     // Navigate to SendMessageScreen, passing necessary props
     
-    console.log('Sender: ', sender)
-    console.log('Receiver: ', receiver)
+    console.log('user._id: ', user._id)
+    console.log('SenderId: ', senderId)
+    console.log('Receiver: ', receiverId)
     navigation.navigate('Send Message', {
-      sender,
-      receiver,
+      senderId: senderId,
+      receiverId,
+      // userId: user._id
     });
   };
 

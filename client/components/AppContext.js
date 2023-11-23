@@ -1,5 +1,5 @@
 // AppContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const AppContext = createContext();
 
@@ -9,6 +9,7 @@ export const AppProvider = ({ children }) => {
   const [myEvents, setMyEvents] = useState(null);
   const [browseEvents, setBrowseEvents] = useState(null);
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null)
 
   const getCurrentUser = () => {
     return user;

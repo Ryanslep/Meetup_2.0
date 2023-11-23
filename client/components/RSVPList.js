@@ -6,6 +6,11 @@ import TemporaryMessage from './TemporaryMessage'; // Import the new component
 import { useAppContext } from './AppContext';
 
 const RSVPList = ({ rsvps }) => {
+  console.log('===========================================')
+  console.log(rsvps)
+  console.log('===========================================')
+  console.log('rsvpList renders')
+  console.log(rsvps)
   const { getCurrentUser } = useAppContext();
   const [tempMessage, setTempMessage] = useState(null);
 
@@ -36,6 +41,7 @@ const RSVPList = ({ rsvps }) => {
 
   return (
     <View>
+      
       <Text style={styles.headerText}>RSVPs:</Text>
       {rsvps ? (
         <FlatList
@@ -44,11 +50,8 @@ const RSVPList = ({ rsvps }) => {
           renderItem={({ item }) => (console.log('Item: ', item),
             <UserWithOptions
               user={item}
-              sender={getCurrentUser()._id}
-              receiver={item._id}
-              onPressMessage={() => alert('Message RSVP')}
-              onPressBlock={() => onPressBlock(item)}
-              onPressAddFriend={() => alert('Add Friend RSVP')}
+              senderId={getCurrentUser()._id}
+              receiverId={item._id}
             />
           )}
         />

@@ -8,7 +8,6 @@ router.post('/create', async (req, res) => {
     // Extract event details from the request body
     const { eventName, date, startTime, endTime, address, capacity, description, host, pictures } = req.body;
 
-    // Create a new event
     const event = new Event({
       eventName,
       date: new Date(date),
@@ -21,22 +20,16 @@ router.post('/create', async (req, res) => {
       pictures
     });
 
-    // Save the event to the database
     await event.save();
-
-    // Find the user by the host ID
     const user = await User.findById(host);
 
-    // If user not found, return an error response
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update the user's events array
     user.events.push(event);
     await user.save();
 
-    // Return a success response
     res.json(event);
   } catch (error) {
     console.error(error);
@@ -44,19 +37,15 @@ router.post('/create', async (req, res) => {
   }
 });
 
-  // Route for event deletion
 router.delete('/delete/:eventId/:userId', async (req, res) => {
     const { eventId, userId } = req.params;
   
     try {
-      // Find the event by its ID
       const event = await Event.findById(eventId);
-  
       if (!event) {
         return res.status(404).json({ message: 'Event not found' });
       }
   
-      // Check if the user is the host of the event
       if (event.host.toString() !== userId) {
         return res.status(403).json({ message: 'Unauthorized: You are not the host of this event' });
       }
@@ -76,7 +65,7 @@ router.delete('/delete/:eventId/:userId', async (req, res) => {
       await Event.findOneAndDelete(event);
       await user.save();
   
-      res.json({ message: 'Event successfully deleted' });
+      res.json({ message: 'Deleted' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Event deletion failed' });
@@ -179,7 +168,6 @@ router.post('/rsvp/:eventId/:userId', async (req, res) => {
             res.status(200).json({ message: `You have RSVP\'d for \"${event.eventName}\"`, event });  
         }
 
-        // Save the updated event
         await event.save();
 
         // Update the user's rsvps array

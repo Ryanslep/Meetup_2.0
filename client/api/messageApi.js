@@ -1,3 +1,5 @@
+// api/messageApi.js
+
 import { apiBaseUrl } from "../utils/apiUtils";
 
 const messageApi = {
@@ -8,11 +10,7 @@ const messageApi = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          sender: sender.toString(), // Convert sender to a string
-          receiver: receiver.toString(), // Convert receiver to a string
-          text,
-        }),
+        body: JSON.stringify({ sender, receiver, text }),
       });
 
       const data = await response.json();
@@ -28,10 +26,25 @@ const messageApi = {
     }
   },
 
-  getMessageHistory: async (userId) => {
+  getThread: async (senderId, receiverId) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/messages/${senderId}/${receiverId}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        return data;
+      } else {
+        throw new Error(data.error || 'Error fetching thread');
+      }
+    } catch (error) {
+      console.error('Error fetching thread:', error);
+      throw new Error('Error fetching thread');
+    }
+  },
+
+  getHistory: async (userId) => {
     try {
       const response = await fetch(`${apiBaseUrl}/messages/history/${userId}`);
-
       const data = await response.json();
 
       if (response.ok) {
