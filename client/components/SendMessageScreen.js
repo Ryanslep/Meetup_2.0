@@ -1,15 +1,12 @@
-// components/ChatScreen.js
-
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { GiftedChat, InputToolbar, Composer, Send, Bubble } from 'react-native-gifted-chat';
 import messageApi from '../api/messageApi';
+import { MaterialIcons } from '@expo/vector-icons'; // Import the desired icon library
+
 
 const SendMessageScreen = ({ route }) => {
-
   const { senderId, receiverId } = route.params;
-  console.log('Sender: ', senderId);
-  console.log('Receiver: ', receiverId);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -55,8 +52,8 @@ const SendMessageScreen = ({ route }) => {
 
   const renderSend = (props) => (
     <Send {...props}>
-      <View style={{ marginRight: 10, marginBottom: 5 }}>
-        {/* Customize the Send button if needed */}
+      <View style={styles.sendButton}>
+        <MaterialIcons name="send" size={24} color="white" />
       </View>
     </Send>
   );
@@ -78,7 +75,7 @@ const SendMessageScreen = ({ route }) => {
         renderComposer={(props) => (
           <Composer
             {...props}
-            textInputStyle={{ color: 'black', backgroundColor: 'lightgray' }}
+            textInputStyle={{ color: 'black', backgroundColor: 'white' }}
             placeholder="Type a message..."
           />
         )}
@@ -88,7 +85,7 @@ const SendMessageScreen = ({ route }) => {
             {...props}
             wrapperStyle={{
               right: { backgroundColor: '#007AFF' },
-              left: { backgroundColor: '#ededed' },
+              left: { backgroundColor: '#cccccc' },
             }}
           />
         )}
@@ -109,6 +106,18 @@ const SendMessageScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  sendButton: {
+    marginRight: 10,
+    marginBottom: 5,
+    backgroundColor: '#007AFF', // Adjust the color as needed
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  sendButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

@@ -33,7 +33,8 @@
     "react-native-root-siblings": "^5.0.1",
     "react-native-root-toast": "^3.5.1",
     "react-native-toast-message": "^2.1.7",
-    "react-native-web": "~0.19.6"
+    "react-native-web": "~0.19.6",
+    "@expo/vector-icons": "^13.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

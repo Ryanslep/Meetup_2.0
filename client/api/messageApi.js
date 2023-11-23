@@ -75,7 +75,14 @@ const messageApi = {
           });
         });
   
-        return Object.values(threads);
+        // Convert threads object to array and sort by the most recent message
+        const sortedThreads = Object.values(threads).sort((a, b) => {
+          const aDate = new Date(a.messages[a.messages.length - 1].createdAt);
+          const bDate = new Date(b.messages[b.messages.length - 1].createdAt);
+          return bDate - aDate;
+        });
+  
+        return sortedThreads;
       } else {
         throw new Error(data.error || 'Error fetching message history');
       }
@@ -84,6 +91,7 @@ const messageApi = {
       throw new Error('Error fetching message history');
     }
   },
+  
   
 
   // You can add more functions for handling media, location, etc. if needed.
