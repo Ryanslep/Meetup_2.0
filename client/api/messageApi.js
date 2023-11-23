@@ -44,11 +44,38 @@ const messageApi = {
 
   getHistory: async (userId) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/messages/history/${userId}`);
+      const response = await fetch(`${apiBaseUrl}/messages/${userId}`);
       const data = await response.json();
-
+  
       if (response.ok) {
-        return data;
+        const threads = {};
+  
+        data.forEach((message) => {
+          const senderId = message.sender._id;
+          const receiverId = message.receiver._id;
+  
+          // Create a unique thread identifier using both sender and receiver IDs
+          const threadId = [senderId, receiverId].sort().join('-');
+  
+          if (!threads[threadId]) {
+            threads[threadId] = {
+              sender: message.sender,
+              receiver: message.receiver,
+              messages: [],
+            };
+          }
+  
+          threads[threadId].messages.push({
+            _id: message._id,
+            text: message.text,
+            createdAt: message.createdAt,
+            sender: message.sender,
+            receiver: message.receiver,
+            // Add other message properties if needed
+          });
+        });
+  
+        return Object.values(threads);
       } else {
         throw new Error(data.error || 'Error fetching message history');
       }
@@ -57,6 +84,7 @@ const messageApi = {
       throw new Error('Error fetching message history');
     }
   },
+  
 
   // You can add more functions for handling media, location, etc. if needed.
 };

@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const Message = require('../models/Message');
 const User = require('../models/User');
+const mongoose = require('mongoose')
 
 // Send message
 router.post('/send', async (req, res) => {
@@ -47,15 +48,16 @@ router.get('/:senderId/:receiverId', async (req, res) => {
 });
 
 // Get All messages for user
-router.get('/history/:userId', async (req, res) => {
+router.get('/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    // Fetch all messages for the specified user
     const messages = await Message.find({
-      $or: [{ sender: userId }, { receiver: userId }],
-    }).sort({ createdAt: 1 });
-
+      $or: [
+        { sender: userId },
+        { receiver: userId },
+      ],
+    }).populate('sender', 'username').populate('receiver', 'username').sort({ createdAt: 1 });
     res.status(200).json(messages);
   } catch (error) {
     console.error('Error fetching message history:', error);

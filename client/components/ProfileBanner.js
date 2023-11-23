@@ -24,15 +24,23 @@ const ProfileBanner = () => {
 
     return (
         <ImageBackground source={require('../assets/profile-background.webp')} style={styles.banner}>
+           
+            <Pressable style={styles.button} onPress={() => navigation.navigate('Inbox')}>
+                <Text style={styles.text}>Inbox</Text>
+            </Pressable>
+            
             <Pressable style={styles.button} onPress={handlePreferences}>
                 <Text style={styles.text}>Preferences</Text>
             </Pressable>
+
             <Pressable style={styles.button} onPress={handleLogOut}>
                 <Text style={styles.text}>Sign Out</Text>
             </Pressable>
+
             <View style={styles.profileContainer}>
                 <Image style={styles.profilePlacholder} source={profilePlacholder} />
             </View>
+
             <Text style={styles.fullName}>{user.username}</Text>
         </ImageBackground>
     );

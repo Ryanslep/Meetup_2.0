@@ -55,7 +55,6 @@ const eventApi = {
   },
 
   rsvp: async (eventId, userId) => {
-    console.log('Got this as eventId: ', eventId)
     try {
       const response = await fetch(`${apiBaseUrl}/event/rsvp/${eventId}/${userId}`, {
         method: 'POST',

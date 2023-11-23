@@ -9,7 +9,6 @@ export const AppProvider = ({ children }) => {
   const [myEvents, setMyEvents] = useState(null);
   const [browseEvents, setBrowseEvents] = useState(null);
   const [user, setUser] = useState(null);
-  const [userId, setUserId] = useState(null)
 
   const getCurrentUser = () => {
     return user;

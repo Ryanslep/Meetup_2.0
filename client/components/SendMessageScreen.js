@@ -6,9 +6,10 @@ import { GiftedChat, InputToolbar, Composer, Send, Bubble } from 'react-native-g
 import messageApi from '../api/messageApi';
 
 const SendMessageScreen = ({ route }) => {
-  const { senderId, receiverId } = route.params;
-  console.log(senderId, receiverId)
 
+  const { senderId, receiverId } = route.params;
+  console.log('Sender: ', senderId);
+  console.log('Receiver: ', receiverId);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {

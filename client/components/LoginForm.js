@@ -22,7 +22,6 @@ const LoginForm = () => {
     useEffect(() => {
         const checkSession = async () => {
             // Check for previous session
-            console.log(typeof setLoggedIn)
             const previousSession = await AsyncStorage.getItem('@userId');
             if(previousSession) {
                 const user = await userApi.getUserInfo(previousSession);

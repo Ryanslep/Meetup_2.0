@@ -15,18 +15,6 @@ const CustomAlert = ({ message, success }) => {
       animation: true,
       hideOnPress: true,
       delay: 0,
-      onShow: () => {
-        console.log('Toast appear animation start');
-      },
-      onShown: () => {
-        console.log('Toast appear animation end');
-      },
-      onHide: () => {
-        console.log('Toast hide animation start');
-      },
-      onHidden: () => {
-        console.log('Toast hide animation end');
-      },
     });
 
     // Automatically hide the toast after a duration

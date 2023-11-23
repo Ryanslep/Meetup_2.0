@@ -50,7 +50,6 @@ const EventCard = ({ event }) => {
   const handleDelete = async () => {
     try {
       const attemptDelete = await eventApi.delete(event._id, user._id);
-      console.log('Delete attempt result:', attemptDelete);
 
       if (attemptDelete.message === 'Deleted') {
         setMyEvents(myEvents.filter((myEvent) => myEvent._id !== event._id));

@@ -16,6 +16,7 @@ import EventFormScreen from './components/EventFormScreen';
 import EventDetails from './components/EventDetails';
 import Preferences from './components/Preferences';
 import SendMessageScreen from './components/SendMessageScreen';
+import Inbox from './components/Inbox';
 
 const Stack = createStackNavigator();
 
@@ -34,13 +35,10 @@ const App = () => {
             <Stack.Screen name="Create Event">
               {(props) => <EventFormScreen {...props} />}
             </Stack.Screen>
-            <Stack.Screen name="Login">
-              {(props) => <LoginScreen {...props} />}
-            </Stack.Screen>
-            <Stack.Screen name="Register">
-              {(props) => <RegisterScreen {...props} />}
-            </Stack.Screen>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Event Details" component={EventDetails} />
+            <Stack.Screen name="Inbox" component={Inbox} />
             <Stack.Screen name="Send Message" component={SendMessageScreen} />
             <Stack.Screen name="Preferences">
               {(props) => <Preferences {...props} />}

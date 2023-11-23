@@ -35,7 +35,6 @@ const userApi = {
   },
   
   getUserByUsername: async (username) => {
-    console.log(username);
     const response = await fetch(`${apiBaseUrl}/user/fetchUsername/${username}`);
     const userInfo = await response.json();
     return userInfo; // Add this line to return userInfo
@@ -52,8 +51,7 @@ const userApi = {
       });
   
       const data = await response.json();
-      console.log(userId, blockedUserId)
-      console.log(data.message)
+
       return data
   }, 
   
@@ -130,7 +128,6 @@ const userApi = {
   },
   handleBlockConfirmation: async (userId, blockedUserId) => {
     try {
-      console.log(`Request received to block user: ${blockedUserId} by user: ${userId}`);
 
       const response = await fetch(`${apiBaseUrl}/user/block`, {
         method: 'POST',

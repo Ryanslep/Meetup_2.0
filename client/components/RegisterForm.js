@@ -32,13 +32,9 @@ const RegisterForm = () => {
     }
 
     const registerData = await userApi.register(username, email, password, fullName);
-    console.log('RegisterData Id: ', registerData.user._id)
-    console.log('Type: ' + typeof registerData)
     if (registerData.message) {
-      console.log('Failure Message: ' + registerData.message)
       setResponse(registerData.message);
     } else {
-      console.log('Supposed Success: ', registerData)
       await AsyncStorage.setItem('@userId', registerData.user._id)
       setLoggedIn(true);
       setUser(registerData.user);

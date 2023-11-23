@@ -39,7 +39,6 @@ const EventFormScreen = () => {
   const handleImagesSelected = async (selectedImages) => {
     try {
       const imageUris = selectedImages.map((image) => image.uri);
-      console.log('Selected Image URIs:', imageUris);
   
       // Convert image URIs to base64 for Android using Expo's ImageManipulator
       const imageFiles = await Promise.all(

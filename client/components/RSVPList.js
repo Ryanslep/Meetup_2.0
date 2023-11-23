@@ -2,42 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import UserWithOptions from './UserWithOptions';
 import userApi from '../api/userApi';
-import TemporaryMessage from './TemporaryMessage'; // Import the new component
 import { useAppContext } from './AppContext';
 
 const RSVPList = ({ rsvps }) => {
-  console.log('===========================================')
-  console.log(rsvps)
-  console.log('===========================================')
-  console.log('rsvpList renders')
-  console.log(rsvps)
   const { getCurrentUser } = useAppContext();
-  const [tempMessage, setTempMessage] = useState(null);
-
-  const showTemporaryMessage = (message) => {
-    setTempMessage(message);
-    setTimeout(() => {
-      setTempMessage(null);
-    }, 3000);
-  };
-
-  const onPressBlock = async (blockedUser) => {
-    try {
-      const currentUser = getCurrentUser();
-      const userId = currentUser._id;
-
-      const blocking = await userApi.blockUser(userId, blockedUser._id);
-
-      if (blocking.message === 'User blocked successfully') {
-        showTemporaryMessage(`Blocked user: ${blockedUser.username}`);
-      } else if (blocking.message === 'User unblocked successfully') {
-        showTemporaryMessage(`Unblocked user: ${blockedUser.username}`);
-      }
-    } catch (error) {
-      showTemporaryMessage('Failed to block/unblock user');
-      console.error('Error blocking/unblocking user:', error);
-    }
-  };
 
   return (
     <View>
@@ -47,9 +15,9 @@ const RSVPList = ({ rsvps }) => {
         <FlatList
           data={rsvps}
           keyExtractor={(item, index) => item._id + index.toString()}
-          renderItem={({ item }) => (console.log('Item: ', item),
+          renderItem={({ item }) => (
             <UserWithOptions
-              user={item}
+              randomUser={item}
               senderId={getCurrentUser()._id}
               receiverId={item._id}
             />
@@ -58,8 +26,6 @@ const RSVPList = ({ rsvps }) => {
       ) : (
         <Text>Loading RSVPs...</Text>
       )}
-
-      {tempMessage && <TemporaryMessage message={tempMessage} />}
     </View>
   );
 };

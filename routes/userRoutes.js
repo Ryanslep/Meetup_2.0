@@ -33,7 +33,6 @@ router.post('/register/:username/:email/:password/:fullName', async (req, res) =
 
     // Save the user
     await user.save();
-    console.log('User registered');
 
     res.json({ user });
   } catch (error) {
@@ -80,12 +79,10 @@ router.get('/hello', async (req, res) => {
 
 // Route for fetching user data (example)
 router.get('/fetch/:userId', async (req, res) => {
-  console.log
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId).populate("preferences");
 
-    console.log(user)
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -106,10 +103,7 @@ router.get('/fetchUsername/:username', async (req, res) => {
 
   try {
     const username = req.params.username;
-    console.log(username);
     const user = await User.findOne({ username: username });
-
-    console.log(user)
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -156,7 +150,6 @@ router.put('/update-user', async (req, res) => {
 
 // Route for user login
 router.post('/login', async (req, res) => {
-  console.log('loggin in')
   const { username, password } = req.body;
 
   try {
@@ -265,9 +258,6 @@ router.post('/preferences/:userId', async (req, res) => {
     // Check if user already has preferences
     let preferences = user.preferences;
 
-
-
-    console.log('Updating Preferences...')
     // If yes, update existing preferences
     const response = await Preferences.findByIdAndUpdate(preferences._id,
       {
@@ -300,10 +290,8 @@ router.post('/block', async (req, res) => {
 
     // Toggle the user's block status
     if (isAlreadyBlocked) {
-      console.log('was already blocked')
       user.blockedUsers = user.blockedUsers.filter((id) => id === blockedUserId);
     } else {
-      console.log('was not blocked')
       user.blockedUsers.push(blockedUserId);
     }
 

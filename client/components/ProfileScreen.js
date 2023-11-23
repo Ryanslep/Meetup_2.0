@@ -7,7 +7,6 @@ import { useAppContext } from './AppContext'; // Import the useAppContext hook
 import userApi from '../api/userApi';
 
 const ProfileScreen = () => {
-  console.log('profile rendering')
   // Use the useAppContext hook to access the shared state
   const {
     user,
@@ -20,11 +19,11 @@ const ProfileScreen = () => {
   } = useAppContext();
 
   useEffect(() => {
-    console.log('using effect')
     const fetchData = async () => {
       try {
         // Use the user from context
         const eventsData = await userApi.getMyEvents(user._id);
+        console.log(eventsData)
         setMyEvents(eventsData || []); // Ensure eventsData is an array or default to an empty array
         const rsvpData = await userApi.getMyRsvps(user._id);
         setMyRsvps(rsvpData || []); // Ensure rsvpData is an array or default to an empty array
@@ -54,10 +53,10 @@ const ProfileScreen = () => {
       <View>
         <Text style={styles.label}>Attending</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
-          {myRsvps &&
-            myRsvps.map((event) => (
-              <EventCard key={event._id} event={event} userId={user && user._id} setMyEvents={setMyEvents} setMyRsvps={setMyRsvps} setBrowseEvents={setBrowseEvents} />
-            ))}
+            {myRsvps &&
+              myRsvps.map((event) => (
+                <EventCard key={event._id} event={event} userId={user && user._id} setMyEvents={setMyEvents} setMyRsvps={setMyRsvps} setBrowseEvents={setBrowseEvents} />
+              ))}
         </ScrollView>
       </View>
     </ScrollView>

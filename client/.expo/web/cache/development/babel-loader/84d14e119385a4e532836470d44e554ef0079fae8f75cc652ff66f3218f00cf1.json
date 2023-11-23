@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var apiBaseUrl = 'http://192.168.1.11:3000';","map":{"version":3,"names":["apiBaseUrl"],"sources":["C:/Users/dyarb/batcave/Meetup_2.0/client/utils/apiUtils.js"],"sourcesContent":["export const apiBaseUrl = 'http://192.168.1.11:3000';"],"mappings":"AAAA,OAAO,IAAMA,UAAU,GAAG,0BAA0B"},"metadata":{},"sourceType":"module","externalDependencies":[]}

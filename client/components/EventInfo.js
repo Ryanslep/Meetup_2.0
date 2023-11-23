@@ -4,12 +4,8 @@ import UserWithOptions from './UserWithOptions';
 import { useAppContext } from './AppContext';
 
 const EventInfo = ({ event, hostData }) => {
-    console.log('ppppppppppppppppppppppppppp')
-  console.log(hostData)
-    console.log('ppppppppppppppppppppppppppp')
 
   const { getCurrentUser } = useAppContext();
-    console.log('getCurrentUser', getCurrentUser()._id);
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString();
     };
@@ -60,7 +56,7 @@ const EventInfo = ({ event, hostData }) => {
                 <Text style={styles.label}>Host:</Text>
                 {hostData ? (
                     <UserWithOptions
-                        user={hostData}
+                        randomUser={hostData}
                         senderId={getCurrentUser()._id}
                         receiverId={hostData._id}
                     />
