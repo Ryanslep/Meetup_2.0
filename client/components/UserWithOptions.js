@@ -10,7 +10,6 @@ import Toast from 'react-native-root-toast';
 const UserWithOptions = ({ randomUser, receiverId }) => {
   const { user } = useAppContext();
   const navigation = useNavigation();
-  console.log(randomUser)
 
   const showToast = (message, backgroundColor) => {
     Toast.show(message, {
@@ -32,11 +31,9 @@ const UserWithOptions = ({ randomUser, receiverId }) => {
   const handleBlock = async () => {
     try {
       const blockAttempt = await userApi.blockUser(user._id, receiverId);
-      console.log('Block Attempt: ', blockAttempt);
       if (blockAttempt === 'blocked') {
         showToast(`You have blocked ${randomUser.username}!`, 'orangered');
         // setMyRsvps([...myRsvps, event]);
-        console.log('blocked duh')
       } else {
         showToast(`No longer blocking ${randomUser.username}`, 'green');
         // setMyRsvps(myRsvps.filter((rsvp) => rsvp._id !== event._id));

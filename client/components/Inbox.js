@@ -12,7 +12,6 @@ const Inbox = () => {
     useEffect(() => {
         const getThreads = async () => {
             const threads = await messageApi.getHistory(user._id);
-            console.log(threads)
             setConversations(threads);
         };
         getThreads();

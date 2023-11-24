@@ -23,7 +23,6 @@ const ProfileScreen = () => {
       try {
         // Use the user from context
         const eventsData = await userApi.getMyEvents(user._id);
-        console.log(eventsData)
         setMyEvents(eventsData || []); // Ensure eventsData is an array or default to an empty array
         const rsvpData = await userApi.getMyRsvps(user._id);
         setMyRsvps(rsvpData || []); // Ensure rsvpData is an array or default to an empty array

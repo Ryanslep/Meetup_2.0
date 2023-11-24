@@ -21,7 +21,6 @@ const BrowseScreen = () => {
         const fetchEvents = async () => {
             try {
                 const eventData = await eventApi.getEvents();
-                console.log(eventData[0].host)
                 setBrowseEvents(eventData);
             } catch (error) {
                 console.error('Error fetching events:', error);

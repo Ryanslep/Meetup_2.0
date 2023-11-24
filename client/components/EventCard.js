@@ -8,7 +8,6 @@ import Toast from 'react-native-root-toast';
 import EventPictures from './EventPictures';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 const EventCard = ({ event }) => {
-  console.log(event.pictures)
   const {
     myRsvps,
     myEvents,

@@ -27,7 +27,7 @@ const EventPictures = ({ pictures }) => {
     <View>
       <View style={{ height: hp('30%') }}>
         <Swiper
-          style={styles.swiper}
+          // style={styles.swiper}
           loop={false}
           index={activeIndex}
           onIndexChanged={(index) => setActiveIndex(index)}

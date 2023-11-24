@@ -14,9 +14,7 @@ const EventDetails = ({ route }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            console.log(event.host)
             const host = await userApi.getUserInfo(event.host._id)
-            console.log(host)
             // Replace with your actual API call for fetching RSVPs
             const rsvpsData = await eventApi.getRsvpList(event._id)
             setHostData(host);
