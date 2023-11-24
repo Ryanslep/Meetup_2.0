@@ -9,7 +9,7 @@ const Preferences = () => {
   const { user } = useAppContext(); // Use the context hook to get the user
 
   const [preferences, setPreferences] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchUserPreferences = async () => {
@@ -72,9 +72,9 @@ const Preferences = () => {
           {/* Block users */}
           <View>
             <Text>Blocked Users: </Text>
-            {preferences.blockedUsers.length > 0 ? (
+            {user.blockedUsers.length > 0 ? (
               <FlatList
-                data={preferences.blockedUsers}
+                data={user.blockedUsers}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
                   <View style={styles.blockedUserContainer}>

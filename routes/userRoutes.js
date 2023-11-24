@@ -81,9 +81,8 @@ router.get('/hello', async (req, res) => {
 router.get('/fetch/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const user = await User.findById(userId).populate("preferences");
-
-
+    const user = await User.findById(userId).populate("preferences").populate('blockedUsers');
+    console.log(user.blockedUsers)
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
