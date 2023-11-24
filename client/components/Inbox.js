@@ -28,17 +28,17 @@ const Inbox = () => {
     const renderConversationItem = ({ item }) => {
         const latestMessage = item.messages[item.messages.length - 1];
         const createdAt = new Date(latestMessage.createdAt);
-
+      
         // Determine the display name based on the comparison
         const displayName =
-          item.receiver.username === user.username
-            ? latestMessage.sender.username
-            : item.receiver.username;
-
+          latestMessage.sender._id === user._id
+            ? item.receiver.username
+            : latestMessage.sender.username;
+      
         return (
           <TouchableOpacity
             style={styles.conversationItem}
-            onPress={() => openChat(item.sender._id, item.receiver._id)}
+            onPress={() => openChat(latestMessage.sender._id, item.receiver._id)}
           >
             <View style={styles.contentContainer}>
               <Text style={styles.receiverText}>{displayName}</Text>
@@ -50,16 +50,16 @@ const Inbox = () => {
             {/* Add more details or styling as needed */}
           </TouchableOpacity>
         );
-    };
+      };      
 
     return (
         <View style={styles.container}>
             {conversations && conversations.length > 0 ? (
                 <FlatList
-                    data={conversations}
-                    keyExtractor={(item) => `${item._id}`}
-                    renderItem={renderConversationItem}
-                />
+                data={conversations}
+                keyExtractor={(item) => (item._id ? item._id.toString() : Math.random().toString())}
+                renderItem={renderConversationItem}
+              />
             ) : (
                 <Text>No conversations yet</Text>
             )}

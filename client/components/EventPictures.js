@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, Modal, Text } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import Swiper from 'react-native-web-swiper';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 const EventPictures = ({ pictures }) => {
   if (!pictures || pictures.length === 0) {
     return null; // Render nothing if there are no pictures
   }
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -24,20 +25,20 @@ const EventPictures = ({ pictures }) => {
 
   return (
     <View>
-      <PagerView
-        style={styles.pagerView}
-        initialPage={0}
-        onPageSelected={(event) => setActiveIndex(event.nativeEvent.position)}
-      >
-        {pictures.map((image, index) => (
-          <View key={index} style={styles.page}>
-            <TouchableOpacity onPress={() => handleImagePress(index)}>
+      <View style={{ height: hp('30%') }}>
+        <Swiper
+          style={styles.swiper}
+          loop={false}
+          index={activeIndex}
+          onIndexChanged={(index) => setActiveIndex(index)}
+        >
+          {pictures.map((image, index) => (
+            <TouchableOpacity key={index} onPress={() => handleImagePress(index)}>
               <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
             </TouchableOpacity>
-          </View>
-        ))}
-      </PagerView>
-
+          ))}
+        </Swiper>
+      </View>
       {/* Display current image number tracker */}
       <View style={styles.imageTracker}>
         <Text style={styles.imageTrackerText}>{`${activeIndex + 1}/${pictures.length}`}</Text>
@@ -57,18 +58,13 @@ const EventPictures = ({ pictures }) => {
 };
 
 const styles = StyleSheet.create({
-  pagerView: {
+  swiper: {
     height: hp('30%'), // Adjust the height as needed
-  },
-  page: {
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   image: {
-    height: hp('30%'), // Adjust the height as needed
-    width: wp('80%'),
+    height: hp('30%'), // Adjust the height to match the Swiper height
+    width: wp('100%'), // Adjust the width to take the full width of the Swiper
     borderRadius: 10,
-    marginHorizontal: wp('2%'),
   },
   imageTracker: {
     position: 'absolute',

@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import FlexInput from './FlexInput';
 import SubmitButton from './SubmitButton';
-import CustomAlert from './CustomAlert';
 
 import userApi from '../api/userApi';
 import { useAppContext } from './AppContext'; // Import the useAppContext hook
@@ -27,7 +26,7 @@ const LoginForm = () => {
                 const user = await userApi.getUserInfo(previousSession);
                 setLoggedIn(true)
                 setUser(user)
-                navigation.navigate('Profile');
+                navigation.navigate('Dashboard');
             }
         }
         checkSession()
@@ -46,7 +45,7 @@ const LoginForm = () => {
             setLoggedIn(true)
             setUser(data.user)
             await AsyncStorage.setItem('@userId', data.user._id);
-            navigation.navigate('Profile');
+            navigation.navigate('Dashboard');
         }
     };
 
@@ -65,7 +64,6 @@ const LoginForm = () => {
                 onChangeText={(text) => setPassword(text)}
             />
             <SubmitButton title="Login" onPress={handleLogin} />
-            {response && <CustomAlert message={response.message} success={response.success} />}
         </View>
     );
 };

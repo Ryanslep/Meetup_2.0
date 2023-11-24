@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import UserWithOptions from './UserWithOptions';
 import { useAppContext } from './AppContext';
 
 const EventInfo = ({ event, hostData }) => {
 
   const { getCurrentUser } = useAppContext();
+  
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString();
     };

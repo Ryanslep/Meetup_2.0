@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, TouchableOpacity } from 'react-native';
 import { localDate, localTime } from '../utils/formatFunctions';
 import { useNavigation } from '@react-navigation/native';
 import eventApi from '../api/eventApi';
 import { useAppContext } from './AppContext';
 import Toast from 'react-native-root-toast';
-
+import EventPictures from './EventPictures';
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 const EventCard = ({ event }) => {
+  console.log(event.pictures)
   const {
     myRsvps,
     myEvents,
@@ -78,7 +80,7 @@ const EventCard = ({ event }) => {
           />
         </Pressable>
 
-        {user._id !== event.host ? (
+        {user._id !== event.host._id ? (
           <Pressable onPress={() => handleRSVP(event._id)}>
             <Image source={require('../assets/rsvp.png')} style={styles.icon} />
           </Pressable>
@@ -91,20 +93,16 @@ const EventCard = ({ event }) => {
           </Pressable>
         )}
       </View>
+      {event.pictures && event.pictures.length > 0 && (
+        <EventPictures pictures={event.pictures} />
+      )}
 
       <Text>{event.description}</Text>
-      <Text>{event.host}</Text>
+      <Text>{event.host.username}</Text>
       <Text>Date: {localDate(event.date)}</Text>
       <Text>Start Time: {localTime(event.startTime)}</Text>
       <Text>End Time: {localTime(event.endTime)}</Text>
 
-      {event.pictures && event.pictures.length > 0 && (
-        <View style={styles.imageContainer}>
-          {event.pictures.map((picture, index) => (
-            <Image key={index} source={{ uri: picture }} style={styles.image} />
-          ))}
-        </View>
-      )}
     </View>
   );
 };
@@ -131,6 +129,18 @@ const styles = StyleSheet.create({
   icon: {
     width: 24,
     height: 24,
+  },
+  imageContainer: {
+    height: hp('20%'), // Adjust the height as needed
+    marginBottom: 8, // Add margin as needed
+  },
+  swiper: {
+    height: hp('100%'), // Take the full height of the container
+  },
+  image: {
+    height: '100%', // Take the full height of the Swiper
+    width: wp('100%'), // Take the full width of the Swiper
+    borderRadius: 8, // Adjust the border radius as needed
   },
 });
 

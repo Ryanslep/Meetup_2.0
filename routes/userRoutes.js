@@ -184,7 +184,7 @@ router.get('/myEvents/:userId', async (req, res) => {
     }
 
     // Retrieve events for the user
-    const userEvents = await Event.find({ host: userId });
+    const userEvents = await Event.find({ host: userId }).populate('host');
 
     res.status(200).json(userEvents);
   } catch (error) {
@@ -205,7 +205,7 @@ router.get('/myRsvps/:userId', async (req, res) => {
     }
 
     // Retrieve RSVPs for the user
-    const userRsvps = await Event.find({ _id: { $in: user.rsvps } });
+    const userRsvps = await Event.find({ _id: { $in: user.rsvps } }).populate('host');
 
     res.status(200).json(userRsvps);
   } catch (error) {
@@ -296,8 +296,7 @@ router.post('/block', async (req, res) => {
 
     await user.save();
     const action = isAlreadyBlocked ? 'unblocked' : 'blocked';
-
-    return res.status(200).json({ message: `User ${action} successfully` });
+    return res.status(200).json(action);
   } catch (error) {
     console.error('Error blocking/unblocking user:', error);
     res.status(500).json({ error: 'Internal Server Error' });

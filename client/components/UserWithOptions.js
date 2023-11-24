@@ -3,16 +3,50 @@ import React from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from './AppContext';
-const UserWithOptions = ({ randomUser, receiverId, onPressBlock, onPressAddFriend }) => {
+import userApi from '../api/userApi';
+import Toast from 'react-native-root-toast';
+
+
+const UserWithOptions = ({ randomUser, receiverId }) => {
   const { user } = useAppContext();
   const navigation = useNavigation();
+  console.log(randomUser)
+
+  const showToast = (message, backgroundColor) => {
+    Toast.show(message, {
+      duration: Toast.durations.SHORT,
+      position: -80,
+      shadow: true,
+      backgroundColor,
+      animation: true,
+    });
+  };
+  
   const handlePressMessage = () => {
-    console.log('Message Press User: ', user._id)
     navigation.navigate('Send Message', {
       senderId: user._id,
       receiverId,
     });
   };
+
+  const handleBlock = async () => {
+    try {
+      const blockAttempt = await userApi.blockUser(user._id, receiverId);
+      console.log('Block Attempt: ', blockAttempt);
+      if (blockAttempt === 'blocked') {
+        showToast(`You have blocked ${randomUser.username}!`, 'orangered');
+        // setMyRsvps([...myRsvps, event]);
+        console.log('blocked duh')
+      } else {
+        showToast(`No longer blocking ${randomUser.username}`, 'green');
+        // setMyRsvps(myRsvps.filter((rsvp) => rsvp._id !== event._id));
+      }
+      return blockAttempt;
+    } catch (err) {
+      showToast(`Error blocking ${receiverId}`);
+    }
+  };
+
 
   return (
     <View style={styles.userContainer}>
@@ -21,12 +55,12 @@ const UserWithOptions = ({ randomUser, receiverId, onPressBlock, onPressAddFrien
         <Pressable onPress={handlePressMessage}>
           <Image source={require('../assets/message.png')} style={styles.icon} />
         </Pressable>
-        <Pressable onPress={onPressBlock}>
+        <Pressable onPress={handleBlock}>
           <Image source={require('../assets/blockUser.png')} style={styles.icon} />
         </Pressable>
-        <Pressable onPress={onPressAddFriend}>
+        {/* <Pressable onPress={onPressAddFriend}>
           <Image source={require('../assets/addFriend.png')} style={styles.icon} />
-        </Pressable>
+        </Pressable> */}
       </View>
     </View>
   );

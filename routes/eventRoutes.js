@@ -77,8 +77,8 @@ router.delete('/delete/:eventId/:userId', async (req, res) => {
 //Route for fetching event data
 router.get('/fetch', async (req, res) => {
     try{
-        const event = await Event.find();
-        res.json(event);
+        const events = await Event.find().populate('host');
+        res.json(events);
     }catch (error){
         console.error('Error fetching events:', error);
         res.status(500).json({message: 'Error fetching event data'});

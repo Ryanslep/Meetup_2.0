@@ -1,8 +1,7 @@
 // App.js
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
-import { RootSiblingParent } from 'react-native-root-siblings';
+import { StyleSheet, Platform, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AppProvider } from './components/AppContext';
@@ -18,18 +17,19 @@ import Preferences from './components/Preferences';
 import SendMessageScreen from './components/SendMessageScreen';
 import Inbox from './components/Inbox';
 
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <RootSiblingParent style={styles.container}>
-      <AppProvider>
-        <NavigationContainer>
+    <AppProvider>
+      <NavigationContainer>
+        <View style={styles.container}>
           <Stack.Navigator initialRouteName="Login">
-            <Stack.Screen name="Profile">
+            <Stack.Screen name="Dashboard">
               {(props) => <ProfileScreen {...props} />}
             </Stack.Screen>
-            <Stack.Screen name="Browse">
+            <Stack.Screen name="Events">
               {(props) => <BrowseScreen {...props} />}
             </Stack.Screen>
             <Stack.Screen name="Create Event">
@@ -44,11 +44,12 @@ const App = () => {
               {(props) => <Preferences {...props} />}
             </Stack.Screen>
           </Stack.Navigator>
-          <Navbar />
-          <StatusBar style="auto" />
-        </NavigationContainer>
-      </AppProvider>
-    </RootSiblingParent>
+        </View>
+
+        <Navbar />
+        <StatusBar style="auto" />
+      </NavigationContainer>
+    </AppProvider>
   );
 };
 
@@ -56,9 +57,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
+    ...(Platform.OS === 'web' && { paddingBottom: hp('12%') }),
   },
 });
 

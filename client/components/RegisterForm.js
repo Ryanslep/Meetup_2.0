@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import FlexInput from './FlexInput';
 import SubmitButton from './SubmitButton';
-import CustomAlert from './CustomAlert';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from './AppContext'; // Import useAppContext hook
 
@@ -39,7 +38,7 @@ const RegisterForm = () => {
       setLoggedIn(true);
       setUser(registerData.user);
       setResponse('Account Registered');
-      navigation.navigate('Profile');
+      navigation.navigate('Dashboard');
     }
   };
 
@@ -89,8 +88,6 @@ const RegisterForm = () => {
         value={confirmPassword}
         onChangeText={(text) => setConfirmPassword(text)}
       />
-      {response && <CustomAlert message={response.message} success={response.success} />}
-      <SubmitButton onPress={handleRegister} title="Sign Up" />
     </View>
   );
 };

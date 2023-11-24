@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.23.3",
+    "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^19.0.0",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/datetimepicker": "7.2.0",
@@ -28,16 +29,17 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-modal": "^13.0.1",
     "react-native-orientation-locker": "^1.6.0",
-    "react-native-pager-view": "6.2.0",
+    "react-native-reanimated": "~3.3.0",
     "react-native-responsive-screen": "^1.4.2",
     "react-native-root-siblings": "^5.0.1",
     "react-native-root-toast": "^3.5.1",
     "react-native-toast-message": "^2.1.7",
-    "react-native-web": "~0.19.6",
-    "@expo/vector-icons": "^13.0.0"
+    "react-native-web": "^0.19.8",
+    "react-native-web-swiper": "^2.2.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@babel/plugin-transform-export-namespace-from": "^7.23.4"
   },
   "private": true
 }

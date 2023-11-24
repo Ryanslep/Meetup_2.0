@@ -13,7 +13,7 @@ const ProfileBanner = () => {
 
     const handleLogOut = async () => {
         // Handle logout using the context function
-        await AsyncStorage.removeItem('@userId')
+        await AsyncStorage.removeItem('@userId');
         setLoggedIn(false);
         navigation.navigate('Login');
     }

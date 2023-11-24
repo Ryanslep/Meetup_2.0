@@ -36,7 +36,7 @@ const Preferences = () => {
   const handleSavePreferences = async () => {
     try {
       await userApi.savePreferences(user._id, preferences);
-      navigation.navigate('Profile');
+      navigation.navigate('Dashboard');
     } catch (error) {
       console.error('Error saving preferences:', error);
     }
