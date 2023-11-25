@@ -162,13 +162,10 @@ const userApi = {
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({userId: userId, file: file}),
       };
   
-      const response = await fetch(`${apiBaseUrl}/user/upload-profile-pic`, {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch(`${apiBaseUrl}/user/upload-profile-pic`, requestOptions);
   
       const data = await response.json();
   

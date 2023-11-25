@@ -324,24 +324,22 @@ router.post('/block', async (req, res) => {
 
 router.post('/upload-profile-pic', async (req, res) => {
   try {
-    const base64Data = req.file.buffer.toString('base64');
-
+    
     // Save the base64 data to the user's profilePic field
-    const user = await User.findByIdAndUpdate(req.body.user.id); // Assuming you have user authentication and req.user is available
+    const user = await User.findById(req.body.userId); // Assuming you have user authentication and req.user is available
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
     }
 
-    if (!req.file) {
+    if (!req.body.file) {
       // No file uploaded, set profilePic to null
       user.profilePic = null;
     } else {
       // File uploaded, process it
-      const base64Data = req.file.buffer.toString('base64');
-      user.profilePic = base64Data;
+      
+      user.profilePic = req.body.file;
     }
 
-    user.profilePic = base64Data;
     await user.save();
 
     res.status(200).json({ message: 'Profile picture uploaded successfully.' });

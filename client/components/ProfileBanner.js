@@ -1,19 +1,26 @@
-// ProfileBanner.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ImageBackground, StyleSheet, Image, View, Text, Pressable } from 'react-native';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import profilePlacholder from '../assets/profile-placeholder.jpg';
-import { useAppContext } from './AppContext'; // Import the useAppContext hook
+import { useAppContext } from './AppContext';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+
 import userApi from '../api/userApi';
 
 const ProfileBanner = () => {
     const [profileImage, setProfileImage] = useState(null);
 
-    const { user, setLoggedIn } = useAppContext(); // Use the useAppContext hook
+    const { user, setLoggedIn } = useAppContext();
     const navigation = useNavigation();
+
+    useEffect(() => {
+        if (user.profilePic) {
+            setProfileImage({ uri: user.profilePic })
+        }
+    }, [])
 
     const handleLogOut = async () => {
         // Handle logout using the context function
@@ -36,35 +43,38 @@ const ProfileBanner = () => {
 
 
         if (!result.cancelled) {
-            console.log('result wasn\'t canceled');
+            const uri = result.assets[0].uri
             console.log(result.assets[0].uri)
-            setProfileImage(result.assets[0].uri)
-            // // Extract base64 data from the result
-            // const base64Data = result.assets;
 
-            // const updateProfilePic = await userApi.uploadProfilePic(user._id, base64Data);
-            // console.log(updateProfilePic)
+            const manipulatedImage = await ImageManipulator.manipulateAsync(
+                uri,
+                [{ resize: { width: 500 } }], // You can adjust the options as needed
+                { base64: true }
+            );
+
+            const imageForDB = `data:image/jpeg;base64,${manipulatedImage.base64}`;
+            const updateProfilePic = await userApi.uploadProfilePic(user._id, imageForDB);
+
+            setProfileImage({ uri: imageForDB });
         }
     };
 
     return (
         <ImageBackground source={require('../assets/profile-background.webp')} style={styles.banner}>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate('Inbox')}>
-                <Text style={styles.text}>Inbox</Text>
-            </Pressable>
+            <View style={styles.userButtons}>
+                <Pressable style={styles.button1} onPress={handlePreferences}>
+                    <Text style={styles.text}>Preferences</Text>
+                </Pressable>
 
-            <Pressable style={styles.button} onPress={handlePreferences}>
-                <Text style={styles.text}>Preferences</Text>
-            </Pressable>
-
-            <Pressable style={styles.button} onPress={handleLogOut}>
-                <Text style={styles.text}>Sign Out</Text>
-            </Pressable>
+                <Pressable style={styles.button2} onPress={handleLogOut}>
+                    <Text style={styles.text}>Sign Out</Text>
+                </Pressable>
+            </View>
 
             <Pressable onPress={handlePickImage} style={styles.profileContainer}>
                 {profileImage ? (
-                    <Image style={styles.profileImage} source={{ uri: profileImage }} />
+                    <Image style={styles.profileImage} source={profileImage} />
                 ) : (
                     <Image style={styles.profilePlacholder} source={profilePlacholder} />
                 )}
@@ -105,11 +115,27 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
     },
-    button: {
-        backgroundColor: 'red', // Change the background color as needed
+    userButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+    },
+    button1: {
+        backgroundColor: '#aaa', // Change the background color as needed
         padding: 10,
         borderRadius: 5,
+        alignItems: 'center',
+        width: '30%',
     },
+    button2: {
+        backgroundColor: '#aaa', // Change the background color as needed
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+
+        width: '30%',
+    },
+   
     text: {
         color: 'white', // Change the text color as needed
         fontSize: 16,
