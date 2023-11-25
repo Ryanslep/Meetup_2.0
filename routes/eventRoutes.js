@@ -144,56 +144,98 @@ router.put('/update/:eventId', async (req, res) => {
 
 
 router.post('/rsvp/:eventId/:userId', async (req, res) => {
-    const eventId = req.params.eventId;
-    const userId = req.params.userId;
+  const eventId = req.params.eventId;
+  const userId = req.params.userId;
 
-    try {
-        // Find the event by its ID
-        const event = await Event.findOne({ _id: eventId });
+  try {
+      // Find the event by its ID
+      const event = await Event.findOne({ _id: eventId });
 
-        if (!event) {
-            return res.status(404).json({ message: 'Event not found' });
-        }
+      if (!event) {
+          return res.status(404).json({ message: 'Event not found' });
+      }
 
-        // Check if the user is already in the rsvps array
-        const userIndex = event.rsvps.findIndex(user => user.toString() === userId);
+      // Check if the user is already in the rsvps array
+      const userIndex = event.rsvps.findIndex(user => user.toString() === userId);
 
-        if (userIndex !== -1) {
-            // If user is already in the RSVP list, remove them
-            event.rsvps.splice(userIndex, 1);
-            res.status(201).json({ message: `You are no longer RSVP\'d for \"${event.eventName}\"`, event });
-        } else {
-            // If user is not in the RSVP list, add them
-            event.rsvps.push(userId);
-            res.status(200).json({ message: `You have RSVP\'d for \"${event.eventName}\"`, event });  
-        }
+      if (userIndex !== -1) {
+          // If user is already in the RSVP list, remove them
+          event.rsvps.splice(userIndex, 1);
+          res.status(201).json({ message: `You are no longer RSVP\'d for \"${event.eventName}\"`, event });
+      } else {
+          // If user is not in the RSVP list, add them
+          event.rsvps.push(userId);
+          res.status(200).json({ message: `You have RSVP\'d for \"${event.eventName}\"`, event });
 
-        await event.save();
+          // Remove the event from the user's interested array
+          const user = await User.findOne({ _id: userId });
 
-        // Update the user's rsvps array
-        const user = await User.findOne({ _id: userId });
+          if (user) {
+              const interestedIndex = user.interested.findIndex(event => event.toString() === eventId);
 
-        if (user) {
-            // Check if the event is already in the user's rsvps array
-            const eventIndex = user.rsvps.findIndex(event => event.toString() === eventId);
+              if (interestedIndex !== -1) {
+                  // If the event is in the user's interested, remove it
+                  user.interested.splice(interestedIndex, 1);
+                  await user.save();
+              }
+          }
+      }
 
-            if (eventIndex !== -1) {
-                // If the event is already in the user's rsvps, remove it
-                user.rsvps.splice(eventIndex, 1);
-            } else {
-                // If the event is not in the user's rsvps, add it
-                user.rsvps.push(eventId);
-            }
+      await event.save();
 
-            // Save the updated user
-            await user.save();
-        }
+      // Update the user's rsvps array
+      const user = await User.findOne({ _id: userId });
 
-    } catch (error) {
-        console.error('Error adding/removing user to/from RSVPs:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
+      if (user) {
+          // Check if the event is already in the user's rsvps array
+          const eventIndex = user.rsvps.findIndex(event => event.toString() === eventId);
+
+          if (eventIndex !== -1) {
+              // If the event is already in the user's rsvps, remove it
+              user.rsvps.splice(eventIndex, 1);
+          } else {
+              // If the event is not in the user's rsvps, add it
+              user.rsvps.push(eventId);
+          }
+
+          // Save the updated user
+          await user.save();
+      }
+
+  } catch (error) {
+      console.error('Error adding/removing user to/from RSVPs:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
 });
+
+
+router.post('/interested/:eventId/:userId', async (req, res) => {
+  const { eventId, userId } = req.params;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return console.log('Given UserId is not defined in the database');
+  }
+  const event = await Event.findById(eventId);
+  if (!event) {
+    return console.log('Event with given eventId is not in the database');
+  }
+
+  if (user.interested.includes(eventId)) {
+    // Remove the event from the interested list
+    user.interested = user.interested.filter(item => item.toString() !== eventId);
+    await user.save(); // Save the user after making changes
+    return res.status(200).json({message: 'Deleted'})
+  } else {
+    // Add the event to the interested list
+    user.interested.push(event);
+    await user.save(); // Save the user after making changes
+    return res.status(200).json({message: 'Added'})
+  }
+
+ 
+});
+
 
 router.post('/report', async (req, res) => {
     try {

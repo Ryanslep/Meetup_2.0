@@ -14,8 +14,8 @@ const Navbar = () => {
 
   return (
     <View style={[styles.container, !loggedIn && styles.hidden]}>
-      <NavButton title="Events" to="Events" user={user} icon={BrowseIcon} />
       <NavButton title="Dashboard" to="Dashboard" user={user} icon={DashboardIcon} />
+      <NavButton title="Events" to="Events" user={user} icon={BrowseIcon} />
       <NavButton title="Messages" to="Inbox" user={user} icon={MessageIcon} />
       {/* Add more NavButton components for additional screens */}
     </View>

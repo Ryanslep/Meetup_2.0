@@ -76,6 +76,32 @@ const eventApi = {
       throw new Error('Failed to RSVP to event');
     }
   },
+  setInterested: async (eventId, userId) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/event/interested/${eventId}/${userId}`, {
+        method: 'POST',
+      });
+
+      if(!response) {
+        console.log('No response from db')
+      }
+      return response.json()
+      // if (response.ok) {
+      //   if (response.status === 200) {
+      //     return 'RSVP';
+      //   }
+      //   if (response.status === 201) {
+      //     return 'UNRSVP';
+      //   }
+      // } else {
+      //   const error = await response.json();
+      //   throw new Error(error.message);
+      // }
+    } catch (error) {
+      console.error('Error RSVPing to event:', error);
+      throw new Error('Failed to RSVP to event');
+    }
+  },
   
 
   delete: async (eventId, userId) => {

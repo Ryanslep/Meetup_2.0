@@ -7,6 +7,7 @@ export const AppProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(null);
   const [myRsvps, setMyRsvps] = useState(null);
   const [myEvents, setMyEvents] = useState(null);
+  const [myInterested, setMyInterested] = useState(null);
   const [browseEvents, setBrowseEvents] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -26,6 +27,8 @@ export const AppProvider = ({ children }) => {
     user,
     setUser,
     getCurrentUser,
+    myInterested,
+    setMyInterested
   };
 
   return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;

@@ -82,7 +82,6 @@ router.get('/fetch/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId).populate("preferences").populate('blockedUsers');
-    console.log(user.blockedUsers)
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -214,6 +213,26 @@ router.get('/myRsvps/:userId', async (req, res) => {
   }
 });
 
+router.get('/myInterested/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const userInterested = await Event.find({ _id: { $in: user.interested } }).populate('host');
+    console.log(userInterested)
+    res.status(200).json(userInterested);
+  } catch (error) {
+    console.error('Error fetching RSVPs:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Get user preferences
 router.get('/preferences/:userId', async (req, res) => {
   try {
@@ -303,7 +322,33 @@ router.post('/block', async (req, res) => {
   }
 });
 
+router.post('/upload-profile-pic', async (req, res) => {
+  try {
+    const base64Data = req.file.buffer.toString('base64');
 
+    // Save the base64 data to the user's profilePic field
+    const user = await User.findByIdAndUpdate(req.body.user.id); // Assuming you have user authentication and req.user is available
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
 
+    if (!req.file) {
+      // No file uploaded, set profilePic to null
+      user.profilePic = null;
+    } else {
+      // File uploaded, process it
+      const base64Data = req.file.buffer.toString('base64');
+      user.profilePic = base64Data;
+    }
+
+    user.profilePic = base64Data;
+    await user.save();
+
+    res.status(200).json({ message: 'Profile picture uploaded successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
 
 module.exports = router;

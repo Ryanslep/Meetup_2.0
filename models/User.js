@@ -25,11 +25,15 @@ const userSchema = new Schema({
   rsvps: [
     { type: Schema.Types.ObjectId, ref: 'Event' },
   ],
+  interested: [
+    { type: Schema.Types.ObjectId, ref: 'Event'}
+  ],
   password: {
     type: String,
   },
   profilePic: { // Add the profilePic field
     type: String,
+    default: null,
   },
   preferences: {
     type: Schema.Types.ObjectId,

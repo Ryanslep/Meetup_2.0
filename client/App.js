@@ -36,6 +36,7 @@ const App = () => {
               {(props) => <EventFormScreen {...props} />}
             </Stack.Screen>
             <Stack.Screen name="Login" component={LoginScreen} />
+            
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Event Details" component={EventDetails} />
             <Stack.Screen name="Inbox" component={Inbox} />

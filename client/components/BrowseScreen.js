@@ -50,6 +50,7 @@ const BrowseScreen = () => {
                             setMyRsvps={setMyRsvps}
                             setMyEvents={setMyEvents}
                             setBrowseEvents={setBrowseEvents}
+                            cardStyles={cardStyles}
                         />
                     ))
                 ) : (
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     scroll: {
-        width: wp('80%'),
+        width: wp('95%'),
         maxWidth: 1000,
     },
     buttonContainer: {
@@ -95,5 +96,52 @@ const styles = StyleSheet.create({
         tintColor: 'white',
     },
 });
+
+const cardStyles = StyleSheet.create({
+    card: {
+      backgroundColor: 'white',
+      padding: 16,
+      borderRadius: 8,
+      margin: 8,
+      elevation: 2,
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 8,
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    icon: {
+      width: 24,
+      height: 24,
+    },
+    imageContainer: {
+      height: hp('20%'), // Adjust the height as needed
+      marginBottom: hp('12%'), // Add margin as needed
+    },
+    swiper: {
+      height: hp('100%'), // Take the full height of the container
+    },
+    image: {
+      height: '100%', // Take the full height of the Swiper
+      width: wp('100%'), // Take the full width of the Swiper
+      borderRadius: 8, // Adjust the border radius as needed
+    },
+    modalContent: {
+      backgroundColor: 'white',
+      padding: 16,
+      borderRadius: 8,
+    },
+    modalButtons: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 8,
+    },
+  })
 
 export default BrowseScreen;

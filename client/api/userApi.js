@@ -104,6 +104,11 @@ const userApi = {
     const myRsvps = await response.json();
     return myRsvps;
   },
+  getMyInterested: async (userId) => {
+    const response = await fetch(`${apiBaseUrl}/user/myInterested/${userId}`);
+    const myInterested = await response.json();
+    return myInterested;
+  },
   getPreferences: async (userId) => {
     const response = await fetch(`${apiBaseUrl}/user/preferences/${userId}`);
     const myPreferences = await response.json();
@@ -150,6 +155,31 @@ const userApi = {
     } catch (error) {
       console.error('Error in handleBlockConfirmation:', error);
       throw new Error('Error blocking user');
+    }
+  },
+  uploadProfilePic: async (userId, file) => {
+    try {
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      };
+  
+      const response = await fetch(`${apiBaseUrl}/user/upload-profile-pic`, {
+        method: 'POST',
+        body: formData,
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log(data.message);
+        // You can perform additional actions based on the response, such as updating the UI
+      } else {
+        console.error('Error uploading profile picture:', data.error);
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error.message);
     }
   },
 }

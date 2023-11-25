@@ -88,6 +88,7 @@ const RegisterForm = () => {
         value={confirmPassword}
         onChangeText={(text) => setConfirmPassword(text)}
       />
+      <SubmitButton onPress={handleRegister} title='Sign Up' ></SubmitButton>
     </View>
   );
 };
