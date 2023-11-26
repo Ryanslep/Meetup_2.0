@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { localDate, localTime } from '../utils/formatFunctions';
 import { useNavigation } from '@react-navigation/native';
 import eventApi from '../api/eventApi';
@@ -112,8 +112,10 @@ const EventCard = ({ event }) => {
             myEvent._id === event._id ? { ...myEvent, status: 'cancelled' } : myEvent
           )
         );
+        showToast(`Cancelled: ${event.eventName}`)
         console.log('Event cancelled successfully.');
       } else {
+        showToast(`Unsuccessful Cancellation`)
         console.log('Cancellation unsuccessful:', cancelAttempt.message);
       }
     } catch (error) {
@@ -133,8 +135,11 @@ const EventCard = ({ event }) => {
           )
         );
         console.log('Event reactivated successfully.');
+        showToast(`Reactivated: ${event.eventName}`)
       } else {
         console.log('Reactivation unsuccessful:', cancelAttempt.message);
+        showToast(`Unsuccessful reactivation`)
+
       }
     } catch (error) {
       console.error('Error reactivating event:', error);
@@ -193,8 +198,6 @@ const EventCard = ({ event }) => {
     }
     return null;
   };
-
-  // const styles = StyleSheet.create(cardStyles);
 
   return (
     <View style={styles.card}>

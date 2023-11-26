@@ -5,6 +5,7 @@ import ProfileBanner from './ProfileBanner';
 import EventList from './EventList';
 import { useAppContext } from './AppContext';
 import userApi from '../api/userApi';
+import { useFocusEffect } from '@react-navigation/native';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 const ProfileScreen = () => {
@@ -21,22 +22,28 @@ const ProfileScreen = () => {
 
   const [selectedSection, setSelectedSection] = useState('all'); // Set 'all' as the default tab
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const eventsData = await userApi.getMyEvents(user._id);
-        setMyEvents(eventsData || []);
-        const rsvpData = await userApi.getMyRsvps(user._id);
-        setMyRsvps(rsvpData || []);
-        const interestedData = await userApi.getMyInterested(user._id);
-        setMyInterested(interestedData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const eventsData = await userApi.getMyEvents(user._id);
+      setMyEvents(eventsData || []);
+      const rsvpData = await userApi.getMyRsvps(user._id);
+      setMyRsvps(rsvpData || []);
+      const interestedData = await userApi.getMyInterested(user._id);
+      setMyInterested(interestedData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, [user._id, setMyEvents, setMyRsvps]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [user._id])
+  );
 
   const handleSectionChange = (section) => {
     setSelectedSection(section);

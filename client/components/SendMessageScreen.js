@@ -26,7 +26,7 @@ const SendMessageScreen = ({ route }) => {
           createdAt: new Date(msg.createdAt),
           user: {
             _id: msg.sender,
-            name: senderInfo.username,
+            name: receiverInfo.username,
             avatar: receiverInfo.profilePic
           },
           position: msg.sender === senderId ? 'right' : 'left',
@@ -55,8 +55,8 @@ const SendMessageScreen = ({ route }) => {
         ...msg,
         user: {
           ...msg.user,
-          // avatar: sender.profilePic, // Assuming receiver.profilePic is the avatar URL
-          name: sender.username
+          // // avatar: sender.profilePic, // Assuming receiver.profilePic is the avatar URL
+          // name: sender.username
         },
       }));
 

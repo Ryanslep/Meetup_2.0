@@ -2,20 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import messageApi from '../api/messageApi';
 import { useAppContext } from './AppContext';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const Inbox = () => {
   const navigation = useNavigation();
   const { user } = useAppContext();
   const [conversations, setConversations] = useState(null);
 
+  const getThreads = async () => {
+    const threads = await messageApi.getHistory(user._id);
+    setConversations(threads);
+  };
+
   useEffect(() => {
-    const getThreads = async () => {
-      const threads = await messageApi.getHistory(user._id);
-      setConversations(threads);
-    };
     getThreads();
   }, [user._id]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getThreads();
+    }, [user._id])
+  );
 
   const openChat = (senderId, receiverId) => {
     navigation.navigate('Send Message', {

@@ -15,7 +15,8 @@ const EventDetails = ({ route }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const host = await userApi.getUserInfo(event.host._id);
+      console.log('Event Details Host: ', event.host)
+      const host = await userApi.getUserInfo(event.host);
       const rsvpsData = await eventApi.getRsvpList(event._id);
       const interestedData = await eventApi.getInterestedList(event._id);
 

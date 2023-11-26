@@ -14,6 +14,7 @@ import Tags from 'react-native-tags';
 const EventFormScreen = () => {
   const navigation = useNavigation();
   const { user, setMyEvents, setBrowseEvents } = useAppContext();
+  console.log('Create Form User: ', user._id);
 
   const [eventName, setEventName] = useState('');
   const [description, setDescription] = useState('');
