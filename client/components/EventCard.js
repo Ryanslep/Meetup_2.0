@@ -176,11 +176,21 @@ const EventCard = ({ event, cardStyles }) => {
     }
     return null; // No button to display if the user is not the host
   };
+
+  const renderHostInfo = () => {
+    return (
+      <View style={styles.hostContainer}>
+        <Image source={{ uri: event.host.profilePic }} style={styles.hostProfilePic} />
+        <Text style={styles.hostUsername}>{event.host.username}</Text>
+      </View>
+    );
+  };
   
   const styles = StyleSheet.create(cardStyles);
 
   return (
     <View style={styles.card}>
+    {renderHostInfo()}
       <View style={styles.row}>
         <EventActionButton onPress={handleViewDetails} icon={require('../assets/viewDetails.png')} text="View Details" />
 

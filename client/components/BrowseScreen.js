@@ -142,6 +142,21 @@ const cardStyles = StyleSheet.create({
       justifyContent: 'space-between',
       marginTop: 8,
     },
+    hostContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    hostProfilePic: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      marginRight: 8,
+    },
+    hostUsername: {
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
   })
 
 export default BrowseScreen;
