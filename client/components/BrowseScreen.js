@@ -19,15 +19,19 @@ const BrowseScreen = () => {
 
     useEffect(() => {
         const fetchEvents = async () => {
-            try {
-                const eventData = await eventApi.getEvents();
-                setBrowseEvents(eventData);
-            } catch (error) {
-                console.error('Error fetching events:', error);
-            }
+          try {
+            const eventData = await eventApi.getEvents();
+            // Filter out events with status 'cancelled'
+            const filteredEvents = eventData.filter(event => event.status !== 'cancelled');
+            setBrowseEvents(filteredEvents);
+          } catch (error) {
+            console.error('Error fetching events:', error);
+          }
         };
+      
         fetchEvents();
-    }, [setBrowseEvents]);
+      }, [setBrowseEvents]);
+      
 
     return (
         <View style={styles.container}>
@@ -115,10 +119,6 @@ const cardStyles = StyleSheet.create({
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: 8,
-    },
-    icon: {
-      width: 24,
-      height: 24,
     },
     imageContainer: {
       height: hp('20%'), // Adjust the height as needed

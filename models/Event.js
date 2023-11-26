@@ -43,6 +43,9 @@ const eventSchema = new Schema({
     rsvps: [
         { type: Schema.Types.ObjectId, ref: 'User' }
     ],
+    interested: [
+        { type: Schema.Types.ObjectId, ref: 'User' }
+    ],
     reports: [
         {
             userId: {
@@ -57,6 +60,7 @@ const eventSchema = new Schema({
           type: String, // Assuming the URIs are stored as strings
         },
       ],
+    status: {type: String, required: false}
 })
 
 const Event = mongoose.model('Event', eventSchema);

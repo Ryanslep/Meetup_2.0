@@ -28,24 +28,35 @@ const Inbox = () => {
     const latestMessage = item.messages[item.messages.length - 1];
     const createdAt = new Date(latestMessage.createdAt);
   
+    const currentUser = user;
+    const sender = latestMessage.sender;
+    const receiver = latestMessage.receiver;
+  
     // Determine the display name based on the comparison
     const displayName =
-      user._id !== latestMessage.sender._id
-        ? item.receiver.username // Render item.receiver's username when user is the sender
-        : item.sender.username; // Render 'David' when user is not the sender
-    const messageReceiverId = 
-      user._id !== latestMessage.sender._id
-        ? item.receiver._id
-        : item.sender._id
+      currentUser._id === sender._id
+        ? receiver.username
+        : sender.username;
+  
+    // Determine the message receiver ID based on the comparison
+    const messageReceiverId =
+      currentUser._id === sender._id
+        ? receiver._id
+        : sender._id;
+
+    const messageText = 
+      currentUser._id === sender._id
+        ? 'You: ' + latestMessage.text
+        : latestMessage.text
   
     return (
       <TouchableOpacity
         style={styles.conversationItem}
-        onPress={() => openChat(user._id, messageReceiverId)}
+        onPress={() => openChat(currentUser._id, messageReceiverId)}
       >
         <View style={styles.contentContainer}>
           <Text style={styles.receiverText}>{displayName}</Text>
-          <Text style={styles.messageText}>{latestMessage.text}</Text>
+          <Text style={styles.messageText}>{messageText}</Text>
         </View>
         <Text style={styles.timestampText}>
           {createdAt.toLocaleString([], { hour: '2-digit', minute: '2-digit' })}
@@ -54,6 +65,8 @@ const Inbox = () => {
       </TouchableOpacity>
     );
   };
+  
+
   
   
 

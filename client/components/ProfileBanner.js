@@ -44,7 +44,6 @@ const ProfileBanner = () => {
 
         if (!result.cancelled) {
             const uri = result.assets[0].uri
-            console.log(result.assets[0].uri)
 
             const manipulatedImage = await ImageManipulator.manipulateAsync(
                 uri,

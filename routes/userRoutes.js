@@ -225,7 +225,6 @@ router.get('/myInterested/:userId', async (req, res) => {
     }
 
     const userInterested = await Event.find({ _id: { $in: user.interested } }).populate('host');
-    console.log(userInterested)
     res.status(200).json(userInterested);
   } catch (error) {
     console.error('Error fetching RSVPs:', error);

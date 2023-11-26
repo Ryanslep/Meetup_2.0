@@ -17,7 +17,10 @@ router.post('/create', async (req, res) => {
       capacity,
       description,
       host,
-      pictures
+      pictures,
+      status: 'active',
+      rsvps: [],
+      interested: [],
     });
 
     await event.save();
@@ -156,11 +159,11 @@ router.post('/rsvp/:eventId/:userId', async (req, res) => {
       }
 
       // Check if the user is already in the rsvps array
-      const userIndex = event.rsvps.findIndex(user => user.toString() === userId);
-
-      if (userIndex !== -1) {
+      const eventRsvpIndex = event.rsvps.findIndex(user => user.toString() === userId);
+      const eventInterestedIndex = event.interested.findIndex(user => user.toString() === userId);
+      if (eventRsvpIndex !== -1) {
           // If user is already in the RSVP list, remove them
-          event.rsvps.splice(userIndex, 1);
+          event.rsvps.splice(eventRsvpIndex, 1);
           res.status(201).json({ message: `You are no longer RSVP\'d for \"${event.eventName}\"`, event });
       } else {
           // If user is not in the RSVP list, add them
@@ -172,10 +175,10 @@ router.post('/rsvp/:eventId/:userId', async (req, res) => {
 
           if (user) {
               const interestedIndex = user.interested.findIndex(event => event.toString() === eventId);
-
               if (interestedIndex !== -1) {
                   // If the event is in the user's interested, remove it
                   user.interested.splice(interestedIndex, 1);
+                  event.interested.splice(eventInterestedIndex, 1);
                   await user.save();
               }
           }
@@ -214,27 +217,34 @@ router.post('/interested/:eventId/:userId', async (req, res) => {
 
   const user = await User.findById(userId);
   if (!user) {
-    return console.log('Given UserId is not defined in the database');
+    return res.status(404).json({ message: 'User not found' });
   }
+
   const event = await Event.findById(eventId);
   if (!event) {
-    return console.log('Event with given eventId is not in the database');
+    return res.status(404).json({ message: 'Event not found' });
   }
 
-  if (user.interested.includes(eventId)) {
+  if (user.interested.some(item => item._id.toString() === eventId)) {
+    console.log('user already interested in the event');
+  
     // Remove the event from the interested list
-    user.interested = user.interested.filter(item => item.toString() !== eventId);
+    user.interested = user.interested.filter(item => item._id.toString() !== eventId);
+    event.interested = event.interested.filter(item => item._id.toString() !== userId);
     await user.save(); // Save the user after making changes
-    return res.status(200).json({message: 'Deleted'})
+    await event.save(); 
+    return res.status(200).json({ message: 'Deleted' });
   } else {
-    // Add the event to the interested list
-    user.interested.push(event);
+    console.log('adding event to user.interested')
+    // Add the event to the users interested list and vice versa
+    user.interested.push(eventId);
+    event.interested.push(userId);
     await user.save(); // Save the user after making changes
-    return res.status(200).json({message: 'Added'})
+    await event.save();
+    return res.status(200).json({ message: 'Added' });
   }
-
- 
 });
+
 
 
 router.post('/report', async (req, res) => {
@@ -280,5 +290,53 @@ router.post('/report', async (req, res) => {
     }
   });
 
+  router.get('/:eventId/interested', async (req, res) => {
+    try {
+      const eventId = req.params.eventId;
+  
+      // Find the event
+      const event = await Event.findById(eventId).populate('interested');
+  
+      if (!event) {
+        return res.status(404).json({ error: 'Event not found.' });
+      }
+      return res.json(event.interested);
+    } catch (error) {
+      console.error('Error fetching event Intersted:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+  });
+
+  router.post('/:eventId/cancel', async (req, res) => {
+    try {
+      const eventId = req.params.eventId;
+
+      const event = await Event.findById(eventId);
+      if(event.status === 'active') {
+        console.log('status was active')
+        event.status = 'cancelled';
+        event.save();
+        return res.status(200).json({message: event.status});
+      } 
+    } catch(error) {
+      console.error('Error canceling event')
+    }
+  });
+
+  router.post('/:eventId/reactivate', async (req, res) => {
+    try {
+      const eventId = req.params.eventId;
+
+      const event = await Event.findById(eventId);
+      if(event.status === 'cancelled') {
+        console.log('status was cancelled')
+        event.status = 'active';
+        event.save();
+        return res.status(200).json({message: event.status});
+      } 
+    } catch(error) {
+      console.error('Error canceling event')
+    }
+  });
 
 module.exports = router;

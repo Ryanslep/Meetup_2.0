@@ -170,7 +170,6 @@ const userApi = {
       const data = await response.json();
   
       if (response.ok) {
-        console.log(data.message);
         // You can perform additional actions based on the response, such as updating the UI
       } else {
         console.error('Error uploading profile picture:', data.error);

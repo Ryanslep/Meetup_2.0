@@ -86,20 +86,10 @@ const eventApi = {
         console.log('No response from db')
       }
       return response.json()
-      // if (response.ok) {
-      //   if (response.status === 200) {
-      //     return 'RSVP';
-      //   }
-      //   if (response.status === 201) {
-      //     return 'UNRSVP';
-      //   }
-      // } else {
-      //   const error = await response.json();
-      //   throw new Error(error.message);
-      // }
+      
     } catch (error) {
-      console.error('Error RSVPing to event:', error);
-      throw new Error('Failed to RSVP to event');
+      console.error('Error setting interested for event:', error);
+      throw new Error('Failed to set intersted for event');
     }
   },
   
@@ -155,6 +145,50 @@ const eventApi = {
       throw error;
     }
   },
+  getInterestedList: async (eventId) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/event/${eventId}/interested`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch Interested list');
+      }
+      
+      console.log(response)
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching Interested list:', error);
+      throw error;
+    }
+  },
+  cancel: async (eventId) => {
+    console.log('Cancelling from api')
+    try {
+      const response = await fetch(`${apiBaseUrl}/event/${eventId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      return response.json()
+    } catch(error) {
+      console.error(error)
+    }
+  },  
+  reactivate: async (eventId) => {
+    console.log('Reactivating from api')
+    try {
+      const response = await fetch(`${apiBaseUrl}/event/${eventId}/reactivate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.json()
+    } catch(error) {
+      console.error(error)
+    }
+  }
 }
 
 export default eventApi;

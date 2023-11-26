@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, ScrollView } from 'react-native';
 import userApi from '../api/userApi';
 import eventApi from '../api/eventApi';
 import EventInfo from './EventInfo';
 import RSVPList from './RSVPList';
+import InterestedList from './InterestedList';
 import EventPictures from './EventPictures';
 
 
@@ -11,28 +12,34 @@ const EventDetails = ({ route }) => {
     const { event } = route.params;
     const [hostData, setHostData] = useState(null);
     const [rsvps, setRsvps] = useState(null);
+    const [interested, setInterested] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             const host = await userApi.getUserInfo(event.host._id)
             // Replace with your actual API call for fetching RSVPs
             const rsvpsData = await eventApi.getRsvpList(event._id)
+            const interestedData = await eventApi.getInterestedList(event._id);
+            console.log('interestedData: ',interestedData)
+
             setHostData(host);
             setRsvps(rsvpsData);
+            setInterested(interestedData)
         }
 
         fetchData();
     }, [event.host, event._id]);
 
     return (
+        <ScrollView>
         <View style={styles.container}>
             <EventPictures pictures={event.pictures} />
             <EventInfo event={event} hostData={hostData} />
 
             <RSVPList rsvps={rsvps} />
-
-            {/* ... (other details) */}
+            <InterestedList interested={interested} />
         </View>
+        </ScrollView>
     );
 };
 
