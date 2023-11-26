@@ -6,6 +6,7 @@ import { useAppContext } from './AppContext';
 const EventInfo = ({ event, hostData }) => {
 
   const { getCurrentUser } = useAppContext();
+    console.log('Event Info HostData.username: ', hostData.username)
   
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString();

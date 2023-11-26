@@ -34,7 +34,6 @@ const ProfileBanner = () => {
     }
 
     const handlePickImage = async () => {
-        console.log('Picking Image')
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,

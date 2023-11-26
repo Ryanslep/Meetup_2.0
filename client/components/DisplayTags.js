@@ -4,7 +4,6 @@ import { View, Text, StyleSheet } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 const DisplayTags = ({ tags }) => { 
-  console.log(tags);
 
   return (
     <View style={styles.tagsContainer}>

@@ -15,11 +15,11 @@ const EventDetails = ({ route }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Event Details Host: ', event.host)
-      const host = await userApi.getUserInfo(event.host);
+      console.log('Event Details Host: ', event.host.username)
+      const host = await userApi.getUserInfo(event.host._id);
       const rsvpsData = await eventApi.getRsvpList(event._id);
       const interestedData = await eventApi.getInterestedList(event._id);
-
+      console.log('Event Details Host Username: ',host)
       setHostData(host);
       setRsvps(rsvpsData);
       setInterested(interestedData);
@@ -32,9 +32,10 @@ const EventDetails = ({ route }) => {
     <ScrollView>
       <View style={styles.container}>
         <EventPictures pictures={event.pictures} />
-        <EventInfo event={event} hostData={hostData} />
-
-        {/* Render Tags */}
+        {hostData && (
+            <EventInfo event={event} hostData={hostData} />
+        )}
+            
         <View style={styles.tagContainer}>
           <Text style={styles.headerText}>Tags</Text>
           <View style={styles.tagList}>

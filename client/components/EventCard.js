@@ -42,8 +42,6 @@ const EventCard = ({ event }) => {
     });
   };
 
-  myEvents.map(event => console.log(event.status))
-
   const handleRSVP = async () => {
     try {
       const rsvpAttempt = await eventApi.rsvp(event._id, user._id);
@@ -104,7 +102,6 @@ const EventCard = ({ event }) => {
   const handleEventCancel = async () => {
     try {
       const cancelAttempt = await eventApi.cancel(event._id);
-      console.log(cancelAttempt)
       if (cancelAttempt.message === 'cancelled') {
         // Update the status to 'cancelled' in myEvents
         setMyEvents((prevMyEvents) =>
@@ -113,10 +110,8 @@ const EventCard = ({ event }) => {
           )
         );
         showToast(`Cancelled: ${event.eventName}`)
-        console.log('Event cancelled successfully.');
       } else {
         showToast(`Unsuccessful Cancellation`)
-        console.log('Cancellation unsuccessful:', cancelAttempt.message);
       }
     } catch (error) {
       console.error('Error cancelling event:', error);
@@ -134,10 +129,8 @@ const EventCard = ({ event }) => {
             myEvent._id === event._id ? { ...myEvent, status: 'active' } : myEvent
           )
         );
-        console.log('Event reactivated successfully.');
         showToast(`Reactivated: ${event.eventName}`)
       } else {
-        console.log('Reactivation unsuccessful:', cancelAttempt.message);
         showToast(`Unsuccessful reactivation`)
 
       }
@@ -149,9 +142,6 @@ const EventCard = ({ event }) => {
   const renderDeleteButton = () => {
     if (user._id === event.host._id) {
       // If the user is the host
-      console.log('rsvpLength: ', event.rsvps.length);
-      console.log('interestedLength: ', event.interested.length);
-
       if (event.status === 'cancelled') {
         // Display "Reactivate Event" button with the status "Cancelled"
         return (
