@@ -6,7 +6,7 @@ const User = require('../models/User');
 router.post('/create', async (req, res) => {
   try {
     // Extract event details from the request body
-    const { eventName, date, startTime, endTime, address, capacity, description, host, pictures } = req.body;
+    const { eventName, date, startTime, endTime, address, capacity, description, host, pictures, tags } = req.body;
 
     const event = new Event({
       eventName,
@@ -16,6 +16,7 @@ router.post('/create', async (req, res) => {
       address,
       capacity,
       description,
+      tags,
       host,
       pictures,
       status: 'active',

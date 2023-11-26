@@ -27,7 +27,7 @@ const SendMessageScreen = ({ route }) => {
           user: {
             _id: msg.sender,
             name: senderInfo.username,
-            avatar: senderInfo.profilePic
+            avatar: receiverInfo.profilePic
           },
           position: msg.sender === senderId ? 'right' : 'left',
         }));
@@ -49,22 +49,50 @@ const SendMessageScreen = ({ route }) => {
         receiver: receiverId,
         text: message.text,
       });
-  
+
       // Ensure that the user object for the new message includes the 'avatar' property
       const updatedMessages = newMessages.map(msg => ({
         ...msg,
         user: {
           ...msg.user,
-          avatar: sender.profilePic, // Assuming receiver.profilePic is the avatar URL
+          // avatar: sender.profilePic, // Assuming receiver.profilePic is the avatar URL
           name: sender.username
         },
       }));
-  
+
       setMessages(previousMessages => GiftedChat.append(previousMessages, updatedMessages));
     } catch (error) {
       console.error('Error sending message:', error);
     }
   }, [senderId, receiverId, receiver]);
+
+  const renderBubble = (props) => {
+    const { currentMessage, previousMessage } = props;
+  
+    // Check if the message position is 'left' (receiver's message)
+    if (currentMessage.position === 'left') {
+      // Check if the previous message is from the same user
+      const isSameUser = previousMessage
+        && previousMessage.user
+        && previousMessage.user._id === currentMessage.user._id;
+  
+      // If it's the same user, don't render the avatar again
+      if (isSameUser) {
+        return <Bubble {...props} />;
+      }
+  
+      return (
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+          {/* Display the receiver's profile image */}
+        
+          <Bubble {...props} />
+        </View>
+      );
+    }
+  
+    // For messages from the sender (on the right), only display the message bubble
+    return <Bubble {...props} />;
+  };
   
 
   const renderSend = (props) => (
@@ -88,6 +116,7 @@ const SendMessageScreen = ({ route }) => {
         onSend={onSend}
         user={{
           _id: senderId,
+          // avatar: receiver.profilePic
         }}
         renderInputToolbar={(props) => (
           <InputToolbar
@@ -104,25 +133,7 @@ const SendMessageScreen = ({ route }) => {
         )}
         renderSend={renderSend}
         // Customize renderBubble to include the avatar inside the message bubble
-        renderBubble={(props) => (
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-            {/* Display the sender's profile image */}
-            <Image
-              source={{ uri: props.currentMessage.user.avatar }}
-              style={{ width: 30, height: 30, borderRadius: 15, marginRight: 8 }}
-            />
-            <Text>{props.currentMessage.user.name}</Text>
-            {/* Display the message bubble */}
-            <Bubble {...props} />
-          </View>
-        )}
-        parsePatterns={(linkStyle) => [
-          {
-            pattern: /#(\w+)/,
-            style: { color: 'orange', textDecorationLine: 'underline' },
-            onPress: (props) => alert(`Pressed on hashtag: ${props.text}`),
-          },
-        ]}
+        renderBubble={renderBubble}
         timeFormat='LT'
       />
     </View>

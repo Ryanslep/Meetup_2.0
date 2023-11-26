@@ -9,6 +9,7 @@ import MultiImagePicker from './MultiImagePicker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from './AppContext';
+import Tags from 'react-native-tags';
 
 const EventFormScreen = () => {
   const navigation = useNavigation();
@@ -23,6 +24,8 @@ const EventFormScreen = () => {
   const [address, setAddress] = useState('');
   const [images, setImages] = useState(null);
   const [capacityError, setCapacityError] = useState('');
+  const [tags, setTags] = useState([]);
+
 
   const handleDateChange = (selectedDate) => {
     setDate(selectedDate);
@@ -36,10 +39,14 @@ const EventFormScreen = () => {
     setEndTime(selectedTime);
   };
 
+  const handleTagChange = (tags) => {
+    setTags(tags);
+  };
+
   const handleImagesSelected = async (selectedImages) => {
     try {
       const imageUris = selectedImages.map((image) => image.uri);
-  
+
       // Convert image URIs to base64 for Android using Expo's ImageManipulator
       const imageFiles = await Promise.all(
         imageUris.map(async (uri) => {
@@ -48,11 +55,11 @@ const EventFormScreen = () => {
             [{ resize: { width: 500 } }], // You can adjust the options as needed
             { base64: true }
           );
-  
+
           return `data:image/jpeg;base64,${manipulatedImage.base64}`;
         })
       );
-  
+
       // Store the base64-encoded data in state
       setImages(imageFiles);
     } catch (error) {
@@ -79,14 +86,15 @@ const EventFormScreen = () => {
       endTime: endTime.toISOString(),
       address,
       capacity: capacity, // Convert capacity to a number
-      pictures: images
+      pictures: images,
+      tags,
     };
     // Call the onSubmit function with the new event
     const createdEvent = await eventApi.create(newEvent);
     setMyEvents((prevEvents) => [...prevEvents, createdEvent])
     setBrowseEvents((prevEvents) => [...prevEvents, createdEvent])
 
-    navigation.navigate('Event Details', {event: createdEvent})
+    navigation.navigate('Event Details', { event: createdEvent })
   };
 
 
@@ -105,6 +113,14 @@ const EventFormScreen = () => {
           placeholder="Description"
           value={description}
           onChangeText={(text) => setDescription(text)}
+        />
+
+        <Text>Tags</Text>
+        <Tags
+          initialTags={tags}
+          onChangeTags={handleTagChange}
+          containerStyle={{ justifyContent: 'flex-start' }}
+          inputStyle={{ backgroundColor: 'white' }}
         />
 
         <View style={styles.dateContainer}>

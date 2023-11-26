@@ -7,41 +7,55 @@ import RSVPList from './RSVPList';
 import InterestedList from './InterestedList';
 import EventPictures from './EventPictures';
 
-
 const EventDetails = ({ route }) => {
-    const { event } = route.params;
-    const [hostData, setHostData] = useState(null);
-    const [rsvps, setRsvps] = useState(null);
-    const [interested, setInterested] = useState(null);
+  const { event } = route.params;
+  const [hostData, setHostData] = useState(null);
+  const [rsvps, setRsvps] = useState(null);
+  const [interested, setInterested] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const host = await userApi.getUserInfo(event.host._id)
-            // Replace with your actual API call for fetching RSVPs
-            const rsvpsData = await eventApi.getRsvpList(event._id)
-            const interestedData = await eventApi.getInterestedList(event._id);
-            console.log('interestedData: ',interestedData)
+  useEffect(() => {
+    const fetchData = async () => {
+      const host = await userApi.getUserInfo(event.host._id);
+      const rsvpsData = await eventApi.getRsvpList(event._id);
+      const interestedData = await eventApi.getInterestedList(event._id);
 
-            setHostData(host);
-            setRsvps(rsvpsData);
-            setInterested(interestedData)
-        }
+      setHostData(host);
+      setRsvps(rsvpsData);
+      setInterested(interestedData);
+    };
 
-        fetchData();
-    }, [event.host, event._id]);
+    fetchData();
+  }, [event.host, event._id]);
 
-    return (
-        <ScrollView>
-        <View style={styles.container}>
-            <EventPictures pictures={event.pictures} />
-            <EventInfo event={event} hostData={hostData} />
+  return (
+    <ScrollView>
+      <View style={styles.container}>
+        <EventPictures pictures={event.pictures} />
+        <EventInfo event={event} hostData={hostData} />
 
-            <RSVPList rsvps={rsvps} />
-            <InterestedList interested={interested} />
+        {/* Render Tags */}
+        <View style={styles.tagContainer}>
+          <Text style={styles.headerText}>Tags</Text>
+          <View style={styles.tagList}>
+            {event.tags && event.tags.length > 0 ? (
+              event.tags.map((tag, index) => (
+                <Text key={index} style={styles.tag}>
+                  {tag}
+                </Text>
+              ))
+            ) : (
+              <Text>No tags available</Text>
+            )}
+          </View>
         </View>
-        </ScrollView>
-    );
+
+        <RSVPList rsvps={rsvps} />
+        <InterestedList interested={interested} />
+      </View>
+    </ScrollView>
+  );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -106,6 +120,20 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 10,
         borderRadius: 5,
+    },
+    tagContainer: {
+        marginBottom: 20,
+    },
+    tagList: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+    },
+    tag: {
+        backgroundColor: '#ddd',
+        padding: 5,
+        borderRadius: 8,
+        marginRight: 5,
+        marginBottom: 5,
     },
 });
 

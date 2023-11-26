@@ -73,28 +73,24 @@ const ProfileScreen = () => {
             events={
               (myEvents || []).concat(myRsvps || [], myInterested || [])
             }
-            cardStyles={cardStyles}
             title="All"
           />
         )}
         {selectedSection === 'hosting' && (
           <EventList
             events={(myEvents || []).filter(event => event.status !== 'cancelled')}
-            cardStyles={cardStyles}
             title="Hosting"
           />
         )}
         {selectedSection === 'attending' && (
           <EventList
             events={(myRsvps || []).filter(event => event.status !== 'cancelled')}
-            cardStyles={cardStyles}
             title="Attending"
           />
         )}
         {selectedSection === 'interested' && (
           <EventList
             events={(myInterested || []).filter(event => event.status !== 'cancelled')}
-            cardStyles={cardStyles}
             title="Interested"
           />
         )}
@@ -127,59 +123,5 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-
-const cardStyles = StyleSheet.create({
-  card: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    margin: 8,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  swiper: {
-    height: hp('100%'),
-  },
-  image: {
-    height: '100%',
-    width: wp('100%'),
-    borderRadius: 8,
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-  },
-  hostContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  hostProfilePic: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginRight: 8,
-  },
-  hostUsername: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-})
 
 export default ProfileScreen;

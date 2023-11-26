@@ -38,7 +38,7 @@ const eventSchema = new Schema({
         required: true
     },
     tags: [
-        { type: Schema.Types.ObjectId, ref: 'Tags' }
+        { type: String } // Keep it as an array of strings
     ],
     rsvps: [
         { type: Schema.Types.ObjectId, ref: 'User' }

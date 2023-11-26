@@ -10,8 +10,10 @@ import Modal from 'react-native-modal';
 import checkIcon from '../assets/check.png'
 import plusIcon from '../assets/plus.png';
 import EventActionButton from './EventActionButton';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import DisplayTags from './DisplayTags';
 
-const EventCard = ({ event, cardStyles }) => {
+const EventCard = ({ event }) => {
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const {
@@ -118,7 +120,7 @@ const EventCard = ({ event, cardStyles }) => {
       console.error('Error cancelling event:', error);
     }
   };
-  
+
 
   const handleReactivate = async () => {
     try {
@@ -144,7 +146,7 @@ const EventCard = ({ event, cardStyles }) => {
       // If the user is the host
       console.log('rsvpLength: ', event.rsvps.length);
       console.log('interestedLength: ', event.interested.length);
-  
+
       if (event.status === 'cancelled') {
         // Display "Reactivate Event" button with the status "Cancelled"
         return (
@@ -185,12 +187,18 @@ const EventCard = ({ event, cardStyles }) => {
       </View>
     );
   };
-  
-  const styles = StyleSheet.create(cardStyles);
+  const renderTags = () => {
+    if (event.tags && event.tags.length > 0) {
+      return <DisplayTags tags={event.tags} />;
+    }
+    return null;
+  };
+
+  // const styles = StyleSheet.create(cardStyles);
 
   return (
     <View style={styles.card}>
-    {renderHostInfo()}
+      {renderHostInfo()}
       <View style={styles.row}>
         <EventActionButton onPress={handleViewDetails} icon={require('../assets/viewDetails.png')} text="View Details" />
 
@@ -220,6 +228,8 @@ const EventCard = ({ event, cardStyles }) => {
         </View>
       )}
 
+      <Text>{renderTags()}</Text>
+
       <View style={styles.row}>
         <Text style={styles.title}>{event.eventName}</Text>
       </View>
@@ -245,5 +255,58 @@ const EventCard = ({ event, cardStyles }) => {
 };
 
 // Styles are imported from either browseScreen or profileScreen
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 8,
+    margin: 8,
+    elevation: 2,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  swiper: {
+    height: hp('100%'),
+  },
+  image: {
+    height: '100%',
+    width: wp('100%'),
+    borderRadius: 8,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 8,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  hostContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  hostProfilePic: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 8,
+  },
+  hostUsername: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  }
+});
 
 export default EventCard;
